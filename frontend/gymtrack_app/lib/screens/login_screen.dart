@@ -144,25 +144,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Column(
                   children: [
-                    // Cabecera sutil de la tarjeta (fecha como en la imagen)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Login - Hoy: 19 Feb", // Fecha de la imagen
-                          style: TextStyle(
-                            color: whiteText.withOpacity(0.6),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Icon(
-                          Icons.date_range_rounded,
-                          color: whiteText.withOpacity(0.6),
-                          size: 16,
-                        ),
-                      ],
+                    Text(
+                      "!Bienvenido a GymTrack!",
+                      style: TextStyle(
+                        color: whiteText,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    // Cabecera sutil de la tarjeta (fecha como en la imagen)
                     const SizedBox(height: 25),
 
                     // Campo de Email Estilizado
