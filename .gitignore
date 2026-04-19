@@ -1,0 +1,35 @@
+# --- IDEs y Sistema ---
+.vscode/
+.idea/
+.metadata/
+.project
+.classpath
+.settings/
+*.iml
+*.swp
+*.DS_Store
+bin/
+
+# --- Backend (Spring Boot / Maven) ---
+backend/target/
+backend/*.jar
+backend/*.war
+backend/*.zip
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# --- Frontend (Flutter) ---
+frontend/gymtrack_app/.dart_tool/
+frontend/gymtrack_app/.flutter-plugins
+frontend/gymtrack_app/.flutter-plugins-dependencies
+frontend/gymtrack_app/.packages
+frontend/gymtrack_app/build/
+frontend/gymtrack_app/ios/Flutter/Generated.xcconfig
+frontend/gymtrack_app/ios/Flutter/flutter_export_environment.sh
+
+# Ejecutables finales
+*.apk
+*.aab
+*.exe
+
+# Logs
+*.log
