@@ -43,6 +43,7 @@ class GymTrackApp extends StatelessWidget {
         ),
       ),
 
+      
       /// Definición de rutas de navegación de la aplicación
       initialRoute: '/home',
       routes: {
