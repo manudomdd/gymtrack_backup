@@ -1,0 +1,114 @@
+[
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_activity_metrics.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_activity_metrics.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/drawable_bg_badge_purple.xml.flat",
+        "source": "com.gymtrack.app-main-34:/drawable/bg_badge_purple.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.gymtrack.app-main-34:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_nav_header_user.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/nav_header_user.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_activity_register.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/activity_register.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/drawable_bg_avatar_magenta.xml.flat",
+        "source": "com.gymtrack.app-main-34:/drawable/bg_avatar_magenta.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.gymtrack.app-main-34:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.gymtrack.app-main-34:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_item_workout.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/item_workout.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_activity_home.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/activity_home.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/drawable_bg_gradient.xml.flat",
+        "source": "com.gymtrack.app-main-34:/drawable/bg_gradient.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_training_log.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_training_log.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/menu_drawer_trainer.xml.flat",
+        "source": "com.gymtrack.app-main-34:/menu/drawer_trainer.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.gymtrack.app-main-34:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_trainer_profile.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_trainer_profile.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_item_client.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/item_client.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/drawable_bg_avatar_purple.xml.flat",
+        "source": "com.gymtrack.app-main-34:/drawable/bg_avatar_purple.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_nav_header_trainer.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/nav_header_trainer.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/menu_drawer_user.xml.flat",
+        "source": "com.gymtrack.app-main-34:/menu/drawer_user.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_dialog_add_workout.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/dialog_add_workout.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_dialog_add_metric.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/dialog_add_metric.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/drawable_bg_card.xml.flat",
+        "source": "com.gymtrack.app-main-34:/drawable/bg_card.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_activity_login.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_trainer_clients.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_trainer_clients.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_trainer_dashboard.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_trainer_dashboard.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_dashboard.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_dashboard.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.gymtrack.app-main-34:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_activity_trainer_home.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/activity_trainer_home.xml"
+    }
+]

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GymTrack</string>
+    <string name="login_title_gym">GYM</string>
+    <string name="login_title_track">TRACK</string>
+    <string name="status_badge">ESTADO: EN DESARROLLO</string>
+    <string name="welcome">¡Bienvenido a GymTrack!</string>
+    <string name="hint_email">example@email.com</string>
+    <string name="hint_password">••••••••</string>
+    <string name="btn_login">Entrar</string>
+    <string name="btn_register">Crear Cuenta</string>
+    <string name="nav_to_register">¿No tienes cuenta? Regístrate</string>
+    <string name="nav_to_login">¿Ya tienes cuenta? Inicia Sesión</string>
+    <string name="create_account_title">CREAR</string>
+    <string name="create_account_subtitle">CUENTA</string>
+    <string name="register_subtitle">Únete a GymTrack y empieza a mejorar</string>
+    <string name="hint_nombre">Nombre Completo</string>
+    <string name="hint_peso">Peso</string>
+    <string name="hint_altura">Altura</string>
+    <string name="hint_password_register">Contraseña (min 6 caracteres)</string>
+    <string name="neat_label">NIVEL DE ACTIVIDAD FISICA DIARIA:</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_training">Registro de Entrenamiento</string>
+    <string name="nav_metrics">Métricas de Actividad</string>
+    <string name="nav_clients">Clientes</string>
+    <string name="nav_profile">Mi Perfil</string>
+    <string name="nav_logout">Cerrar Sesión</string>
+    <string name="welcome_back">Bienvenido de vuelta</string>
+    <string name="welcome_coach">Bienvenido, Coach</string>
+    <string name="quick_access">Accesos Rápidos</string>
+    <string name="error_fill_all">Por favor, rellena todos los campos</string>
+    <string name="error_credentials">Error: Credenciales inválidas</string>
+    <string name="error_email_exists">Error: El email ya existe o hay un problema</string>
+    <string name="success_account">¡Cuenta creada con éxito! Inicia sesión.</string>
+    <string name="success_welcome">¡Bienvenido!</string>
+    <string name="logout_title">Cerrar Sesión</string>
+    <string name="logout_message">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm_logout">Cerrar Sesión</string>
+    <string name="gymtrack_user">Usuario GymTrack</string>
+    <string name="gymtrack_trainer">Coach - GymTrack</string>
+    <string name="trainer_role">Entrenador Personal</string>
+    <string name="suffix_kg">kg</string>
+    <string name="suffix_cm">cm</string>
+</resources>

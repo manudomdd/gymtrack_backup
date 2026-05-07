@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fondo principal -->
+    <color name="deep_purple">#0F0014</color>
+    <!-- Fondo de cards, drawer, campos de input -->
+    <color name="input_field_bg">#1A0026</color>
+    <!-- Acento morado: botones secundarios, iconos, bordes -->
+    <color name="primary_purple">#4D0073</color>
+    <!-- Acento principal: magenta para títulos y CTAs -->
+    <color name="magenta">#FF00BF</color>
+    <!-- Mensajes de error -->
+    <color name="error_red">#FF3333</color>
+    <!-- Mensajes de éxito -->
+    <color name="success_green">#00BF80</color>
+    <!-- Textos -->
+    <color name="white">#FFFFFF</color>
+    <color name="white_54">#8AFFFFFF</color>
+    <color name="white_24">#3DFFFFFF</color>
+    <!-- Status bar -->
+    <color name="status_bar">#1A0026</color>
+</resources>
