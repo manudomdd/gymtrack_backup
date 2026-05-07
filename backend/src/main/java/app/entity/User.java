@@ -1,4 +1,4 @@
-package entity;
+package app.entity;
 
 import java.util.Collection;
 
@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,7 +25,8 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private int edad; 
-    private Enum tipoUsuario; 
+    @Enumerated(EnumType.STRING)
+    private TipoUsuario tipoUsuario; 
     private double peso; 
     private int altura;
     private int neat; 
@@ -76,14 +79,12 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		return java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER"));
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.email;
 	}
 
 	public int getEdad() {
@@ -94,11 +95,11 @@ public class User implements UserDetails {
 		this.edad = edad;
 	}
 
-	public Enum getTipoUsuario() {
+	public TipoUsuario getTipoUsuario() {
 		return tipoUsuario;
 	}
 
-	public void setTipoUsuario(Enum tipoUsuario) {
+	public void setTipoUsuario(TipoUsuario tipoUsuario) {
 		this.tipoUsuario = tipoUsuario;
 	}
 

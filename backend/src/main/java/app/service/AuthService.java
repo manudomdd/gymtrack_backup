@@ -1,9 +1,9 @@
-package service;
+package app.service;
 
-import dto.LoginRequest;
-import dto.RegisterRequest;
-import entity.User;
-import repository.UserRepository;
+import app.dto.LoginRequest;
+import app.dto.RegisterRequest;
+import app.entity.User;
+import app.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;

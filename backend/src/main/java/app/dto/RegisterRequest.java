@@ -1,4 +1,6 @@
-package dto;
+package app.dto;
+
+import app.entity.TipoUsuario;
 
 public class RegisterRequest {
 	
@@ -6,12 +8,12 @@ public class RegisterRequest {
 	private String email; 
 	private String password;
 	private int edad; 
-	private Enum tipoUsuario; 
+	private TipoUsuario tipoUsuario; 
 	private double peso; 
 	private int altura; 
 	private int neat;
 	
-	public RegisterRequest(String nombre, String email, String password, Enum tipoUsuario, double peso, int altura,
+	public RegisterRequest(String nombre, String email, String password, TipoUsuario tipoUsuario, double peso, int altura,
 			int neat) {
 		super();
 		this.nombre = nombre;
@@ -47,11 +49,11 @@ public class RegisterRequest {
 		this.password = password;
 	}
 
-	public Enum getTipoUsuario() {
+	public TipoUsuario getTipoUsuario() {
 		return tipoUsuario;
 	}
 
-	public void setTipoUsuario(Enum tipoUsuario) {
+	public void setTipoUsuario(TipoUsuario tipoUsuario) {
 		this.tipoUsuario = tipoUsuario;
 	}
 

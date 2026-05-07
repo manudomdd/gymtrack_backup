@@ -1,8 +1,8 @@
-package controller;
+package app.controller;
 
-import dto.LoginRequest;
-import dto.RegisterRequest;
-import service.AuthService;
+import app.dto.LoginRequest;
+import app.dto.RegisterRequest;
+import app.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

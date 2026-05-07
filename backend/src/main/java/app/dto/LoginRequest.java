@@ -1,4 +1,4 @@
-package dto;
+package app.dto;
 
 public class LoginRequest {
 	
