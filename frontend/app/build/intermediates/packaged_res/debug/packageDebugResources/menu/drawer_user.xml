@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_dashboard" android:title="Dashboard" android:icon="@android:drawable/ic_menu_agenda" />
-    <item android:id="@+id/nav_training" android:title="Registro de Entrenamiento" android:icon="@android:drawable/ic_menu_edit" />
-    <item android:id="@+id/nav_metrics" android:title="Métricas de Actividad" android:icon="@android:drawable/ic_menu_today" />
-    <item android:id="@+id/nav_logout" android:title="Cerrar Sesión" android:icon="@android:drawable/ic_lock_power_off" />
-</menu>

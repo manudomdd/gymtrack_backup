@@ -16,15 +16,13 @@ backend/*.jar
 backend/*.war
 backend/*.zip
 backend/.mvn/wrapper/maven-wrapper.jar
+!backend/.mvn/wrapper/maven-wrapper.properties
 
-# --- Frontend (Flutter) ---
-frontend/gymtrack_app/.dart_tool/
-frontend/gymtrack_app/.flutter-plugins
-frontend/gymtrack_app/.flutter-plugins-dependencies
-frontend/gymtrack_app/.packages
-frontend/gymtrack_app/build/
-frontend/gymtrack_app/ios/Flutter/Generated.xcconfig
-frontend/gymtrack_app/ios/Flutter/flutter_export_environment.sh
+# --- Frontend (Android / Gradle) ---
+frontend/.gradle/
+frontend/build/
+frontend/app/build/
+frontend/local.properties
 
 # Ejecutables finales
 *.apk
