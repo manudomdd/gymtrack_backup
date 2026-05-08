@@ -19,8 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.JsonObject;
 import com.gymtrack.app.R;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,8 +55,8 @@ public class TrainingLogFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_training_log, container, false);
     }
 
@@ -70,8 +72,7 @@ public class TrainingLogFragment extends Fragment {
         Button btnNext = view.findViewById(R.id.btn_next_month);
         Button btnAdd = view.findViewById(R.id.btn_add_workout);
 
-        // Datos de ejemplo igual que el Flutter
-        addSampleData();
+        // Los datos se cargarán desde el backend en fetchWorkoutsFromBackend()
 
         adapter = new WorkoutAdapter(new ArrayList<>());
         rvWorkouts.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -88,29 +89,7 @@ public class TrainingLogFragment extends Fragment {
         btnAdd.setOnClickListener(v -> showAddWorkoutDialog());
 
         refreshCalendar();
-    }
-
-    /** Añade los entrenamientos de ejemplo del proyecto Flutter */
-    private void addSampleData() {
-        Map<String, Object> w1 = new HashMap<>();
-        w1.put("date", Calendar.getInstance());
-        w1.put("exercise", "Press de Banca");
-        w1.put("sets", 4);
-        w1.put("reps", 8);
-        w1.put("rir", 2);
-        w1.put("comment", "Excelente sesión, muy fuerte hoy");
-        workoutSessions.add(w1);
-
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DAY_OF_MONTH, -1);
-        Map<String, Object> w2 = new HashMap<>();
-        w2.put("date", yesterday);
-        w2.put("exercise", "Sentadilla");
-        w2.put("sets", 3);
-        w2.put("reps", 10);
-        w2.put("rir", 1);
-        w2.put("comment", "Un poco cansado pero completé todo");
-        workoutSessions.add(w2);
+        fetchWorkoutsFromBackend();
     }
 
     /** Reconstruye el calendario para el mes/año de selectedDate */
@@ -189,10 +168,19 @@ public class TrainingLogFragment extends Fragment {
                 .inflate(R.layout.dialog_add_workout, null);
 
         TextInputEditText etExercise = dialogView.findViewById(R.id.et_exercise);
+        android.widget.Spinner spinnerMuscleGroup = dialogView.findViewById(R.id.spinner_muscle_group);
+        TextInputEditText etPeso = dialogView.findViewById(R.id.et_peso);
         TextInputEditText etSets = dialogView.findViewById(R.id.et_sets);
         TextInputEditText etReps = dialogView.findViewById(R.id.et_reps);
         TextInputEditText etRir = dialogView.findViewById(R.id.et_rir);
         TextInputEditText etComment = dialogView.findViewById(R.id.et_comment);
+
+        // Configurar Spinner de Grupos Musculares
+        String[] groups = { "Pecho", "Espalda", "Hombro", "Bíceps", "Tríceps", "Cuádriceps", "Femorales" };
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_item, groups);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMuscleGroup.setAdapter(adapter);
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Registrar Entrenamiento")
@@ -201,23 +189,108 @@ public class TrainingLogFragment extends Fragment {
                 .setPositiveButton("Guardar", (dialog, which) -> {
                     String exercise = etExercise.getText() != null ? etExercise.getText().toString().trim() : "";
                     if (exercise.isEmpty()) {
-                        Toast.makeText(requireContext(),
-                                "Por favor ingresa el nombre del ejercicio", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Por favor ingresa el nombre del ejercicio",
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Map<String, Object> newWorkout = new HashMap<>();
-                    newWorkout.put("date", (Calendar) selectedDate.clone());
-                    newWorkout.put("exercise", exercise);
-                    newWorkout.put("sets", parseOrZero(etSets));
-                    newWorkout.put("reps", parseOrZero(etReps));
-                    newWorkout.put("rir", parseOrZero(etRir));
-                    newWorkout.put("comment", etComment.getText() != null ? etComment.getText().toString() : "");
-                    workoutSessions.add(newWorkout);
-                    refreshWorkoutList();
-                    Toast.makeText(requireContext(),
-                            "Entrenamiento registrado correctamente", Toast.LENGTH_SHORT).show();
+
+                    JsonObject workout = new JsonObject();
+                    workout.addProperty("exercise", exercise);
+                    workout.addProperty("muscleGroup", spinnerMuscleGroup.getSelectedItem().toString());
+                    workout.addProperty("peso", parseDoubleOrZero(etPeso));
+                    workout.addProperty("sets", parseOrZero(etSets));
+                    workout.addProperty("reps", parseOrZero(etReps));
+                    workout.addProperty("rir", parseOrZero(etRir));
+                    workout.addProperty("comment", etComment.getText() != null ? etComment.getText().toString() : "");
+                    workout.addProperty("date",
+                            new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(selectedDate.getTime()));
+
+                    saveWorkoutToBackend(workout);
                 })
                 .show();
+    }
+
+    private void saveWorkoutToBackend(JsonObject workout) {
+        com.gymtrack.app.network.AuthRepository auth = new com.gymtrack.app.network.AuthRepository(requireContext());
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+
+        new Thread(() -> {
+            try {
+                okhttp3.RequestBody body = okhttp3.RequestBody.create(workout.toString(),
+                        okhttp3.MediaType.get("application/json; charset=utf-8"));
+                okhttp3.Request request = new okhttp3.Request.Builder()
+                        .url("http://10.0.2.2:8080/api/client/workouts")
+                        .addHeader("Authorization", "Bearer " + auth.getToken())
+                        .post(body)
+                        .build();
+
+                try (okhttp3.Response response = client.newCall(request).execute()) {
+                    if (getActivity() == null)
+                        return;
+                    getActivity().runOnUiThread(() -> {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Entrenamiento guardado", Toast.LENGTH_SHORT).show();
+                            fetchWorkoutsFromBackend();
+                        } else {
+                            Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            } catch (IOException e) {
+                if (getActivity() == null)
+                    return;
+                getActivity().runOnUiThread(
+                        () -> Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+
+    private void fetchWorkoutsFromBackend() {
+        com.gymtrack.app.network.AuthRepository auth = new com.gymtrack.app.network.AuthRepository(requireContext());
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+
+        new Thread(() -> {
+            try {
+                okhttp3.Request request = new okhttp3.Request.Builder()
+                        .url("http://10.0.2.2:8080/api/client/workouts")
+                        .addHeader("Authorization", "Bearer " + auth.getToken())
+                        .get()
+                        .build();
+
+                try (okhttp3.Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String json = response.body().string();
+                        com.google.gson.JsonArray array = com.google.gson.JsonParser.parseString(json).getAsJsonArray();
+
+                        workoutSessions.clear();
+                        for (com.google.gson.JsonElement el : array) {
+                            JsonObject obj = el.getAsJsonObject();
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("exercise", obj.get("exercise").getAsString());
+                            map.put("muscleGroup", obj.get("muscleGroup").getAsString());
+                            map.put("sets", obj.get("sets").getAsInt());
+                            map.put("reps", obj.get("reps").getAsInt());
+                            map.put("rir", obj.get("rir").getAsInt());
+                            map.put("comment", obj.get("comment").isJsonNull() ? "" : obj.get("comment").getAsString());
+
+                            // Parsear fecha
+                            String dateStr = obj.get("date").getAsString(); // yyyy-MM-dd
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(dateStr));
+                            map.put("date", cal);
+
+                            workoutSessions.add(map);
+                        }
+
+                        if (getActivity() == null)
+                            return;
+                        getActivity().runOnUiThread(this::refreshWorkoutList);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private int parseOrZero(TextInputEditText et) {
@@ -225,6 +298,14 @@ public class TrainingLogFragment extends Fragment {
             return et.getText() != null ? Integer.parseInt(et.getText().toString()) : 0;
         } catch (NumberFormatException e) {
             return 0;
+        }
+    }
+
+    private double parseDoubleOrZero(TextInputEditText et) {
+        try {
+            return et.getText() != null ? Double.parseDouble(et.getText().toString()) : 0.0;
+        } catch (NumberFormatException e) {
+            return 0.0;
         }
     }
 
@@ -267,10 +348,10 @@ public class TrainingLogFragment extends Fragment {
                 holder.tvComment.setVisibility(View.GONE);
             }
 
-            holder.btnEdit.setOnClickListener(v ->
-                    Toast.makeText(v.getContext(), "Editar en desarrollo", Toast.LENGTH_SHORT).show());
-            holder.btnDelete.setOnClickListener(v ->
-                    Toast.makeText(v.getContext(), "Eliminar en desarrollo", Toast.LENGTH_SHORT).show());
+            holder.btnEdit.setOnClickListener(
+                    v -> Toast.makeText(v.getContext(), "Editar en desarrollo", Toast.LENGTH_SHORT).show());
+            holder.btnDelete.setOnClickListener(
+                    v -> Toast.makeText(v.getContext(), "Eliminar en desarrollo", Toast.LENGTH_SHORT).show());
         }
 
         @Override

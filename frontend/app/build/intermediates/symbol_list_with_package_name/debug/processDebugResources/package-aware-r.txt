@@ -2981,6 +2981,7 @@ drawable bg_avatar_purple
 drawable bg_badge_purple
 drawable bg_card
 drawable bg_gradient
+drawable bg_input_field
 drawable btn_checkbox_checked_mtrl
 drawable btn_checkbox_checked_to_unchecked_mtrl_animation
 drawable btn_checkbox_unchecked_mtrl
@@ -3180,6 +3181,7 @@ id bounceEnd
 id bounceStart
 id btn_add_metric
 id btn_add_workout
+id btn_back
 id btn_create_plan
 id btn_delete
 id btn_details
@@ -3187,14 +3189,17 @@ id btn_edit
 id btn_edit_profile
 id btn_go_login
 id btn_go_register
+id btn_link_trainer
 id btn_login
 id btn_new_training
 id btn_next_month
 id btn_plan
 id btn_prev_month
 id btn_register
+id btn_save_sleep
 id btn_see_clients
 id btn_see_metrics
+id btn_update_profile
 id btn_workouts
 id buttonPanel
 id cache_measures
@@ -3281,6 +3286,7 @@ id enterAlways
 id enterAlwaysCollapsed
 id et_altura
 id et_comment
+id et_edad
 id et_email
 id et_exercise
 id et_nombre
@@ -3290,6 +3296,8 @@ id et_reps
 id et_rir
 id et_search
 id et_sets
+id et_sleep_hours
+id et_trainer_code
 id et_value
 id exitUntilCollapsed
 id expand_activities_button
@@ -3356,6 +3364,7 @@ id line3
 id linear
 id listMode
 id list_item
+id ll_metrics_container
 id m3_side_sheet
 id marquee
 id masked
@@ -3418,8 +3427,8 @@ id mtrl_view_tag_bottom_padding
 id multiply
 id nav_clients
 id nav_dashboard
+id nav_health
 id nav_logout
-id nav_metrics
 id nav_profile
 id nav_trainer_dashboard
 id nav_training
@@ -3488,9 +3497,12 @@ id progress_circular
 id progress_horizontal
 id radio
 id ratio
+id rb_cliente
+id rb_entrenador
 id rectangles
 id report_drawn
 id reverseSawtooth
+id rg_role
 id right
 id rightToLeft
 id right_icon
@@ -3541,6 +3553,8 @@ id south
 id spacer
 id special_effects_controller_view_tag
 id spinner_metric
+id spinner_muscle_group
+id spinner_sleep_quality
 id spline
 id split_action_bar
 id spread
@@ -3603,6 +3617,7 @@ id til_reps
 id til_rir
 id til_search
 id til_sets
+id til_trainer_code
 id til_value
 id time
 id title
@@ -3642,7 +3657,13 @@ id tv_rir
 id tv_rutina
 id tv_sets
 id tv_sleep_value
+id tv_specialty
+id tv_steps_count
 id tv_steps_value
+id tv_trainer_code
+id tv_trainer_email
+id tv_trainer_name
+id tv_trainer_status
 id tv_water_value
 id unchecked
 id uniform
@@ -3781,6 +3802,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_client_metrics
 layout activity_home
 layout activity_login
 layout activity_register
@@ -3804,7 +3826,9 @@ layout design_text_input_start_icon
 layout dialog_add_metric
 layout dialog_add_workout
 layout fragment_activity_metrics
+layout fragment_client_profile
 layout fragment_dashboard
+layout fragment_health
 layout fragment_trainer_clients
 layout fragment_trainer_dashboard
 layout fragment_trainer_profile

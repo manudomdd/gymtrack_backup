@@ -33,8 +33,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-            String token = authService.login(request);
-            return ResponseEntity.ok(Map.of("token", token));
+            app.dto.LoginResponse response = authService.login(request);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas o usuario no encontrado"));

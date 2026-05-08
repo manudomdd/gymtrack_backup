@@ -12,6 +12,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
 @Entity
 @Table (name = "users")
@@ -31,6 +37,17 @@ public class User implements UserDetails {
     private int altura;
     private int neat; 
     
+    @jakarta.persistence.Column(unique = true)
+    private String trainerCode;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id")
+    @JsonIgnore
+    private User trainer;
+
+    @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<User> clients;
     
 	public User() {
 		super();
@@ -125,5 +142,29 @@ public class User implements UserDetails {
 
 	public void setNeat(int neat) {
 		this.neat = neat;
-	}	
+	}
+
+	public String getTrainerCode() {
+		return trainerCode;
+	}
+
+	public void setTrainerCode(String trainerCode) {
+		this.trainerCode = trainerCode;
+	}
+
+	public User getTrainer() {
+		return trainer;
+	}
+
+	public void setTrainer(User trainer) {
+		this.trainer = trainer;
+	}
+
+	public List<User> getClients() {
+		return clients;
+	}
+
+	public void setClients(List<User> clients) {
+		this.clients = clients;
+	}
 }

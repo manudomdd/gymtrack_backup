@@ -1,11 +1,19 @@
 [
     {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_client_profile.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_client_profile.xml"
+    },
+    {
         "merged": "com.gymtrack.app-debug-32:/layout_fragment_activity_metrics.xml.flat",
         "source": "com.gymtrack.app-main-34:/layout/fragment_activity_metrics.xml"
     },
     {
         "merged": "com.gymtrack.app-debug-32:/drawable_bg_badge_purple.xml.flat",
         "source": "com.gymtrack.app-main-34:/drawable/bg_badge_purple.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/drawable_bg_input_field.xml.flat",
+        "source": "com.gymtrack.app-main-34:/drawable/bg_input_field.xml"
     },
     {
         "merged": "com.gymtrack.app-debug-32:/mipmap-xxxhdpi_ic_launcher.png.flat",
@@ -28,12 +36,12 @@
         "source": "com.gymtrack.app-main-34:/mipmap-xxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.gymtrack.app-debug-32:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.gymtrack.app-main-34:/mipmap-hdpi/ic_launcher.png"
-    },
-    {
         "merged": "com.gymtrack.app-debug-32:/layout_item_workout.xml.flat",
         "source": "com.gymtrack.app-main-34:/layout/item_workout.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.gymtrack.app-main-34:/mipmap-hdpi/ic_launcher.png"
     },
     {
         "merged": "com.gymtrack.app-debug-32:/layout_activity_home.xml.flat",
@@ -70,6 +78,14 @@
     {
         "merged": "com.gymtrack.app-debug-32:/layout_nav_header_trainer.xml.flat",
         "source": "com.gymtrack.app-main-34:/layout/nav_header_trainer.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_fragment_health.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/fragment_health.xml"
+    },
+    {
+        "merged": "com.gymtrack.app-debug-32:/layout_activity_client_metrics.xml.flat",
+        "source": "com.gymtrack.app-main-34:/layout/activity_client_metrics.xml"
     },
     {
         "merged": "com.gymtrack.app-debug-32:/menu_drawer_user.xml.flat",

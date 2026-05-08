@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-37:12
-INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-37:12
-INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-37:12
-INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-37:12
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-50:12
+INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-50:12
+INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-50:12
+INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:2:1-50:12
 MERGED from [com.google.android.material:material:1.11.0] /home/manu/.gradle/caches/8.13/transforms/599a5935c2166e8e0b398a0aed9a2d82/transformed/material-1.11.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/manu/.gradle/caches/8.13/transforms/7eb027e7305127024cd5dad21ffe3a42/transformed/constraintlayout-2.1.4/AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/manu/.gradle/caches/8.13/transforms/7011d89884e6a3063a6ce55edd9f882f/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
@@ -58,9 +58,25 @@ uses-permission#android.permission.INTERNET
 ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:4:5-67
 	android:name
 		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:4:22-64
+uses-permission#android.permission.ACTIVITY_RECOGNITION
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:5:5-79
+	android:name
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:5:22-76
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:6:5-77
+	android:name
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:6:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_HEALTH
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:7:5-84
+	android:name
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:7:22-81
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:8:5-77
+	android:name
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:8:22-74
 application
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:6:5-36:19
-INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:6:5-36:19
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:10:5-49:19
+INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:10:5-49:19
 MERGED from [com.google.android.material:material:1.11.0] /home/manu/.gradle/caches/8.13/transforms/599a5935c2166e8e0b398a0aed9a2d82/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] /home/manu/.gradle/caches/8.13/transforms/599a5935c2166e8e0b398a0aed9a2d82/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/manu/.gradle/caches/8.13/transforms/7eb027e7305127024cd5dad21ffe3a42/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
@@ -82,53 +98,67 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /home/manu/.gradle/caches/8
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.9.0] /home/manu/.gradle/caches/8.13/transforms/00eeb73d329f60914ee7cf1a9183d8d3/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:10:9-35
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:14:9-35
 	android:label
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:9:9-41
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:13:9-41
 	android:icon
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:8:9-43
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:12:9-43
 	android:allowBackup
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:7:9-35
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:11:9-35
 	android:theme
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:11:9-46
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:15:9-46
 	android:usesCleartextTraffic
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:12:9-44
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:16:9-44
 activity#com.gymtrack.app.LoginActivity
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:14:9-22:20
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:18:9-26:20
 	android:windowSoftInputMode
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:17:13-55
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:21:13-55
 	android:exported
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:16:13-36
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:20:13-36
 	android:name
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:15:13-42
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:19:13-42
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:18:13-21:29
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:22:13-25:29
 action#android.intent.action.MAIN
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:19:17-69
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:23:17-69
 	android:name
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:19:25-66
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:23:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:20:17-77
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:24:17-77
 	android:name
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:20:27-74
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:24:27-74
 activity#com.gymtrack.app.RegisterActivity
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:24:9-26:58
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:28:9-30:58
 	android:windowSoftInputMode
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:26:13-55
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:30:13-55
 	android:name
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:25:13-45
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:29:13-45
 activity#com.gymtrack.app.HomeActivity
-ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:28:9-30:55
-	android:windowSoftInputMode
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:30:13-52
-	android:name
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:29:13-41
-activity#com.gymtrack.app.TrainerHomeActivity
 ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:32:9-34:55
 	android:windowSoftInputMode
 		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:34:13-52
 	android:name
-		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:33:13-48
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:33:13-41
+activity#com.gymtrack.app.TrainerHomeActivity
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:36:9-38:55
+	android:windowSoftInputMode
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:38:13-52
+	android:name
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:37:13-48
+activity#com.gymtrack.app.TrainerClientMetricsActivity
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:40:9-42:55
+	android:windowSoftInputMode
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:42:13-52
+	android:name
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:41:13-57
+service#com.gymtrack.app.services.StepCounterService
+ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:44:9-47:54
+	android:exported
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:46:13-37
+	android:foregroundServiceType
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:47:13-51
+	android:name
+		ADDED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml:45:13-56
 uses-sdk
 INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/manu/Escritorio/GymTrack/frontend/app/src/main/AndroidManifest.xml
