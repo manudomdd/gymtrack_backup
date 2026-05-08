@@ -42,7 +42,6 @@ public class User implements UserDetails {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainer_id")
-    @JsonIgnore
     private User trainer;
 
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)

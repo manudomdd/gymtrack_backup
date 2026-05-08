@@ -83,11 +83,21 @@ public class ClientProfileFragment extends Fragment {
     }
 
     private void handleUpdateProfile() {
+        String nombre = etNombre.getText().toString().trim();
+        String edadStr = etEdad.getText().toString().trim();
+        String pesoStr = etPeso.getText().toString().trim();
+        String alturaStr = etAltura.getText().toString().trim();
+
+        if (nombre.isEmpty() || edadStr.isEmpty() || pesoStr.isEmpty() || alturaStr.isEmpty()) {
+            Toast.makeText(getContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         JsonObject data = new JsonObject();
-        data.addProperty("nombre", etNombre.getText().toString());
-        data.addProperty("edad", Integer.parseInt(etEdad.getText().toString()));
-        data.addProperty("peso", Double.parseDouble(etPeso.getText().toString()));
-        data.addProperty("altura", Integer.parseInt(etAltura.getText().toString()));
+        data.addProperty("nombre", nombre);
+        data.addProperty("edad", Integer.parseInt(edadStr));
+        data.addProperty("peso", Double.parseDouble(pesoStr));
+        data.addProperty("altura", Integer.parseInt(alturaStr));
 
         clientRepository.updateProfile(data, new ClientRepository.Callback<Void>() {
             @Override

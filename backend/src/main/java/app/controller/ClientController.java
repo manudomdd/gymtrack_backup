@@ -43,7 +43,13 @@ public class ClientController {
             user.setEdad(updateData.getEdad());
             user.setPeso(updateData.getPeso());
             user.setAltura(updateData.getAltura());
-            user.setNeat(updateData.getNeat());
+
+            // Solo actualizamos NEAT si viene un valor distinto de cero (o si se desea
+            // mantener)
+            if (updateData.getNeat() > 0) {
+                user.setNeat(updateData.getNeat());
+            }
+
             return ResponseEntity.ok(userRepo.save(user));
         }
         return ResponseEntity.notFound().build();
@@ -94,7 +100,7 @@ public class ClientController {
         if (userOpt.isPresent()) {
             User client = userOpt.get();
             Optional<User> trainerOpt = userRepo.findByTrainerCode(code);
-            
+
             if (trainerOpt.isPresent() && trainerOpt.get().getTipoUsuario() == app.entity.TipoUsuario.ENTRENADOR) {
                 client.setTrainer(trainerOpt.get());
                 userRepo.save(client);
