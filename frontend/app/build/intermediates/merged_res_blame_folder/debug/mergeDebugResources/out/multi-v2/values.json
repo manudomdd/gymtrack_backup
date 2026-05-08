@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.gymtrack.app-mergeDebugResources-30:/values/values.xml",
+            "outputFile": "com.gymtrack.app-mergeDebugResources-32:/values/values.xml",
             "map": [
                 {
                     "source": "/home/manu/.gradle/caches/8.13/transforms/599a5935c2166e8e0b398a0aed9a2d82/transformed/material-1.11.0/res/values/values.xml",
@@ -78,23 +78,6 @@
                     }
                 },
                 {
-                    "source": "/home/manu/.gradle/caches/8.13/transforms/8f99eca147a811c8455705bf51a8554e/transformed/lifecycle-viewmodel-2.6.1/res/values/values.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "49",
-                        "endOffsets": "100"
-                    },
-                    "to": {
-                        "startLines": "1874",
-                        "startColumns": "4",
-                        "startOffsets": "123840",
-                        "endColumns": "49",
-                        "endOffsets": "123885"
-                    }
-                },
-                {
                     "source": "/home/manu/.gradle/caches/8.13/transforms/1c633396272abb962b06baa742e76edd/transformed/recyclerview-1.3.2/res/values/values.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
@@ -114,7 +97,7 @@
                     }
                 },
                 {
-                    "source": "/home/manu/.gradle/caches/8.13/transforms/3915c8e4a54f1361a4b50ccbe6389f80/transformed/lifecycle-runtime-2.6.1/res/values/values.xml",
+                    "source": "/home/manu/.gradle/caches/8.13/transforms/c37f9b8d04b7589c420e722e05a616ef/transformed/lifecycle-runtime-2.7.0/res/values/values.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -145,6 +128,23 @@
                         "startOffsets": "123786",
                         "endColumns": "53",
                         "endOffsets": "123835"
+                    }
+                },
+                {
+                    "source": "/home/manu/.gradle/caches/8.13/transforms/841874fbcf1874ea0a5d660c5d096f79/transformed/lifecycle-viewmodel-2.7.0/res/values/values.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "49",
+                        "endOffsets": "100"
+                    },
+                    "to": {
+                        "startLines": "1874",
+                        "startColumns": "4",
+                        "startOffsets": "123840",
+                        "endColumns": "49",
+                        "endOffsets": "123885"
                     }
                 },
                 {

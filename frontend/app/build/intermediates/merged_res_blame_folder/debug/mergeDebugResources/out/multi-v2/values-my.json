@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.gymtrack.app-mergeDebugResources-30:/values-my/values-my.xml",
+            "outputFile": "com.gymtrack.app-mergeDebugResources-32:/values-my/values-my.xml",
             "map": [
                 {
                     "source": "/home/manu/.gradle/caches/8.13/transforms/00eeb73d329f60914ee7cf1a9183d8d3/transformed/core-1.9.0/res/values-my/values-my.xml",
