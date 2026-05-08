@@ -199,16 +199,30 @@ public class TrainerClientsFragment extends Fragment {
                 .setView(dialogView)
                 .setNegativeButton("Cancelar", null)
                 .setPositiveButton("Asignar", (dialog, which) -> {
-                    long clientId = (long) clientData.get("id");
-                    
+                    Object idObj = clientData.get("id");
+                    long clientId = idObj instanceof Number ? ((Number) idObj).longValue() : -1;
+                    if (clientId == -1) return;
+
+                    String exercise = etExercise.getText() != null ? etExercise.getText().toString().trim() : "";
+                    String setsStr = etSets.getText() != null ? etSets.getText().toString().trim() : "";
+                    String repsStr = etReps.getText() != null ? etReps.getText().toString().trim() : "";
+                    String rirStr = etRir.getText() != null ? etRir.getText().toString().trim() : "";
+
+                    if (exercise.isEmpty() || setsStr.isEmpty() || repsStr.isEmpty() || rirStr.isEmpty()) {
+                        Toast.makeText(getContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    boolean daySelected = false;
                     for (int i = 0; i < 7; i++) {
                         if (checkBoxes[i].isChecked()) {
+                            daySelected = true;
                             JsonObject workout = new JsonObject();
-                            workout.addProperty("exercise", etExercise.getText().toString());
+                            workout.addProperty("exercise", exercise);
                             workout.addProperty("muscleGroup", spinnerMuscleGroup.getSelectedItem().toString());
-                            workout.addProperty("sets", Integer.parseInt(etSets.getText().toString()));
-                            workout.addProperty("reps", Integer.parseInt(etReps.getText().toString()));
-                            workout.addProperty("rir", Integer.parseInt(etRir.getText().toString()));
+                            workout.addProperty("sets", Integer.parseInt(setsStr));
+                            workout.addProperty("reps", Integer.parseInt(repsStr));
+                            workout.addProperty("rir", Integer.parseInt(rirStr));
                             workout.addProperty("completed", false);
                             
                             Calendar targetDate = getNextDayOfWeek(i);
@@ -216,6 +230,9 @@ public class TrainerClientsFragment extends Fragment {
 
                             assignWorkoutToClient(clientId, workout);
                         }
+                    }
+                    if (!daySelected) {
+                        Toast.makeText(getContext(), "Selecciona al menos un día", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .show();
