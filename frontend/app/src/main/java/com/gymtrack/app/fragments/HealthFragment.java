@@ -39,36 +39,39 @@ public class HealthFragment extends Fragment {
     private Spinner spinnerQuality;
     private Button btnSave;
     private SharedPreferences prefs;
-    
+
     private final BroadcastReceiver stepsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             int steps = intent.getIntExtra("steps", 0);
-            if (tvSteps != null) tvSteps.setText(String.valueOf(steps));
+            if (tvSteps != null)
+                tvSteps.setText(String.valueOf(steps));
         }
     };
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_health, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
         tvSteps = view.findViewById(R.id.tv_steps_count);
         etHours = view.findViewById(R.id.et_sleep_hours);
         spinnerQuality = view.findViewById(R.id.spinner_sleep_quality);
         btnSave = view.findViewById(R.id.btn_save_sleep);
-        
+
         prefs = requireContext().getSharedPreferences("gymtrack_prefs", Context.MODE_PRIVATE);
         tvSteps.setText(String.valueOf(prefs.getInt("daily_steps", 0)));
 
         // Configurar Spinner 1-10
-        Integer[] ratings = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, ratings);
+        Integer[] ratings = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item,
+                ratings);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerQuality.setAdapter(adapter);
         spinnerQuality.setSelection(4); // Default 5
@@ -78,7 +81,8 @@ public class HealthFragment extends Fragment {
 
     private void saveSleepLog() {
         String hoursStr = etHours.getText().toString();
-        if (hoursStr.isEmpty()) return;
+        if (hoursStr.isEmpty())
+            return;
 
         double hours = Double.parseDouble(hoursStr);
         int quality = (int) spinnerQuality.getSelectedItem();
@@ -86,8 +90,9 @@ public class HealthFragment extends Fragment {
         JsonObject log = new JsonObject();
         log.addProperty("hours", hours);
         log.addProperty("quality", quality);
-        
-        String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
+
+        String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                .format(new java.util.Date());
         log.addProperty("date", currentDate);
 
         saveSleepToBackend(log);
@@ -109,7 +114,8 @@ public class HealthFragment extends Fragment {
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
-                    if (getActivity() == null) return;
+                    if (getActivity() == null)
+                        return;
                     getActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
                             Toast.makeText(getContext(), "Sueño registrado correctamente", Toast.LENGTH_SHORT).show();
@@ -120,10 +126,10 @@ public class HealthFragment extends Fragment {
                     });
                 }
             } catch (IOException e) {
-                if (getActivity() == null) return;
-                getActivity().runOnUiThread(() -> 
-                    Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show()
-                );
+                if (getActivity() == null)
+                    return;
+                getActivity().runOnUiThread(
+                        () -> Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
@@ -132,7 +138,8 @@ public class HealthFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            requireContext().registerReceiver(stepsReceiver, new IntentFilter(StepCounterService.ACTION_STEPS_UPDATED), Context.RECEIVER_NOT_EXPORTED);
+            requireContext().registerReceiver(stepsReceiver, new IntentFilter(StepCounterService.ACTION_STEPS_UPDATED),
+                    Context.RECEIVER_NOT_EXPORTED);
         } else {
             requireContext().registerReceiver(stepsReceiver, new IntentFilter(StepCounterService.ACTION_STEPS_UPDATED));
         }
