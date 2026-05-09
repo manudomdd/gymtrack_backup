@@ -44,10 +44,10 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        // Navegar a Métricas de Actividad
+        // Navegar a Parámetros de Salud
         btnSeeMetrics.setOnClickListener(v -> {
             if (getActivity() instanceof HomeActivity) {
-                ((HomeActivity) getActivity()).loadFragment(new ActivityMetricsFragment());
+                ((HomeActivity) getActivity()).loadFragment(new HealthFragment());
             }
         });
     }

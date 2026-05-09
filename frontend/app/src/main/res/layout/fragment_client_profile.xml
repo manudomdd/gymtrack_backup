@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/deep_purple"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Avatar -->
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/bg_avatar_magenta"
+            android:gravity="center">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="U" android:textSize="50sp" android:textStyle="bold" android:textColor="@color/deep_purple"/>
+        </LinearLayout>
+
+        <Space android:layout_width="wrap_content" android:layout_height="24dp"/>
+
+        <!-- Card Información Personal -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/input_field_bg" app:cardCornerRadius="12dp" android:layout_marginBottom="16dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Información Personal" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <Space android:layout_width="wrap_content" android:layout_height="16dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout style="@style/Widget.GymTrack.TextInputLayout" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Nombre">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_nombre" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/white"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout style="@style/Widget.GymTrack.TextInputLayout" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Edad">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_edad" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/white" android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <com.google.android.material.textfield.TextInputLayout style="@style/Widget.GymTrack.TextInputLayout" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Peso (kg)">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_peso" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/white" android:inputType="numberDecimal"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <Space android:layout_width="12dp" android:layout_height="wrap_content"/>
+                    <com.google.android.material.textfield.TextInputLayout style="@style/Widget.GymTrack.TextInputLayout" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Altura (cm)">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_altura" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/white" android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <Space android:layout_width="wrap_content" android:layout_height="16dp"/>
+
+                <Button android:id="@+id/btn_update_profile" style="@style/Widget.GymTrack.Button.Primary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Actualizar Datos" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card Vincular Entrenador -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/input_field_bg" app:cardCornerRadius="12dp" android:layout_marginBottom="24dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mi Entrenador" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <Space android:layout_width="wrap_content" android:layout_height="8dp"/>
+                <TextView android:id="@+id/tv_trainer_status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No tienes ningún entrenador vinculado" android:textSize="14sp" android:textColor="@color/white_54"/>
+                
+                <Space android:layout_width="wrap_content" android:layout_height="16dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout style="@style/Widget.GymTrack.TextInputLayout" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Código de Entrenador">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_trainer_code" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/white" android:textAllCaps="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+
+                <Button android:id="@+id/btn_link_trainer" style="@style/Widget.GymTrack.Button.Primary" android:layout_width="match_parent" android:layout_height="wrap_content" android:backgroundTint="@color/magenta" android:text="Vincular Código" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

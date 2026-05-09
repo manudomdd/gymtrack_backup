@@ -63,8 +63,14 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     setLoading(false);
                     showSnackbar("¡Bienvenido!", true);
-                    // Navegar a HomeActivity
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    
+                    // Redirigir según el rol
+                    Class<?> targetActivity = HomeActivity.class;
+                    if ("ENTRENADOR".equals(authRepository.getRole())) {
+                        targetActivity = TrainerHomeActivity.class;
+                    }
+
+                    Intent intent = new Intent(LoginActivity.this, targetActivity);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 });

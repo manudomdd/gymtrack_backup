@@ -39,10 +39,17 @@ public class AuthService {
         newUser.setPeso(request.getPeso());
         newUser.setTipoUsuario(request.getTipoUsuario());
 
+        if (request.getTipoUsuario() == app.entity.TipoUsuario.ENTRENADOR) {
+            String code = "TR-" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+            newUser.setTrainerCode(code);
+        } else if (request.getTipoUsuario() == app.entity.TipoUsuario.CLIENTE && request.getTrainerCode() != null) {
+            userRepository.findByTrainerCode(request.getTrainerCode()).ifPresent(newUser::setTrainer);
+        }
+
         userRepository.save(newUser);
     }
 
-    public String login(LoginRequest request) {
+    public app.dto.LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
@@ -50,6 +57,7 @@ public class AuthService {
         User usuario = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        return jwtService.generarToken(usuario);
+        String token = jwtService.generarToken(usuario);
+        return new app.dto.LoginResponse(token, usuario.getTipoUsuario());
     }
 }

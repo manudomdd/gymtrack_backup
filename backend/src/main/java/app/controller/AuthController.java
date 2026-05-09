@@ -1,6 +1,7 @@
 package app.controller;
 
 import app.dto.LoginRequest;
+import app.dto.LoginResponse;
 import app.dto.RegisterRequest;
 import app.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,12 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-
+    
+    /**
+     * Endpoint principal para el registro de nuevos usuarios. 
+     * @param request
+     * @return
+     */
     @PostMapping("/register")
     public ResponseEntity<?> registrar(@Valid @RequestBody RegisterRequest request) {
         try {
@@ -29,12 +35,17 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
-
+    
+    /**
+     * Endpoint para incio de sesión tanto de usuarios como entrenadores.
+     * @param request
+     * @return
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-            String token = authService.login(request);
-            return ResponseEntity.ok(Map.of("token", token));
+            LoginResponse response = authService.login(request);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales incorrectas o usuario no encontrado"));

@@ -12,6 +12,17 @@ public class RegisterRequest {
 	private double peso; 
 	private int altura; 
 	private int neat;
+	private String trainerCode;
+
+	public RegisterRequest() {}
+
+	public String getTrainerCode() {
+		return trainerCode;
+	}
+
+	public void setTrainerCode(String trainerCode) {
+		this.trainerCode = trainerCode;
+	}
 	
 	public RegisterRequest(String nombre, String email, String password, TipoUsuario tipoUsuario, double peso, int altura,
 			int neat) {

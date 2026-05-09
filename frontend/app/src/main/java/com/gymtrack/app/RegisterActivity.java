@@ -30,6 +30,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView tvNeatLabel;
     private Button btnRegister, btnGoLogin;
     private ProgressBar progressBar;
+    private android.view.View tilTrainerCode;
+    private TextInputEditText etTrainerCode;
     private AuthRepository authRepository;
 
     private int neatValue = 3;
@@ -55,6 +57,18 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btn_register);
         btnGoLogin = findViewById(R.id.btn_go_login);
         progressBar = findViewById(R.id.progress_bar);
+        tilTrainerCode = findViewById(R.id.til_trainer_code);
+        etTrainerCode = findViewById(R.id.et_trainer_code);
+
+        // Lógica para mostrar/ocultar código de entrenador
+        android.widget.RadioGroup rgRole = findViewById(R.id.rg_role);
+        rgRole.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.rb_entrenador) {
+                tilTrainerCode.setVisibility(View.GONE);
+            } else {
+                tilTrainerCode.setVisibility(View.VISIBLE);
+            }
+        });
 
         // Listener del slider NEAT
         sliderNeat.addOnChangeListener((slider, value, fromUser) -> {
@@ -92,6 +106,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         setLoading(true);
 
+        String tipoUsuario = "CLIENTE";
+        android.widget.RadioGroup rgRole = findViewById(R.id.rg_role);
+        if (rgRole.getCheckedRadioButtonId() == R.id.rb_entrenador) {
+            tipoUsuario = "ENTRENADOR";
+        }
+
         Map<String, Object> userData = new HashMap<>();
         userData.put("nombre", nombre);
         userData.put("email", email);
@@ -99,7 +119,14 @@ public class RegisterActivity extends AppCompatActivity {
         userData.put("peso", peso);
         userData.put("altura", altura);
         userData.put("neat", neatValue);
-        userData.put("tipoUsuario", "CLIENTE");
+        userData.put("tipoUsuario", tipoUsuario);
+        
+        if (tipoUsuario.equals("CLIENTE")) {
+            String trainerCode = etTrainerCode.getText().toString().trim();
+            if (!trainerCode.isEmpty()) {
+                userData.put("trainerCode", trainerCode);
+            }
+        }
 
         authRepository.register(userData, new AuthRepository.AuthCallback() {
             @Override

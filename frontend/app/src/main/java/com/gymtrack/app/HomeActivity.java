@@ -10,12 +10,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
 
 import com.google.android.material.navigation.NavigationView;
-import com.gymtrack.app.fragments.ActivityMetricsFragment;
 import com.gymtrack.app.fragments.DashboardFragment;
 import com.gymtrack.app.fragments.TrainingLogFragment;
+import com.gymtrack.app.fragments.ClientProfileFragment;
+import com.gymtrack.app.fragments.HealthFragment;
 import com.gymtrack.app.network.AuthRepository;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity principal para usuarios clientes.
@@ -60,8 +64,10 @@ public class HomeActivity extends AppCompatActivity {
                 loadFragment(new DashboardFragment());
             } else if (id == R.id.nav_training) {
                 loadFragment(new TrainingLogFragment());
-            } else if (id == R.id.nav_metrics) {
-                loadFragment(new ActivityMetricsFragment());
+            } else if (id == R.id.nav_profile) {
+                loadFragment(new ClientProfileFragment());
+            } else if (id == R.id.nav_health) {
+                loadFragment(new HealthFragment());
             } else if (id == R.id.nav_logout) {
                 showLogoutDialog();
             }
@@ -72,6 +78,56 @@ public class HomeActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             loadFragment(new DashboardFragment());
             navView.setCheckedItem(R.id.nav_dashboard);
+        }
+
+        // Solicitar permisos y luego iniciar servicio de pasos
+        checkPermissionsAndStartService();
+    }
+
+    private void checkPermissionsAndStartService() {
+        String[] permissions;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            permissions = new String[]{
+                    android.Manifest.permission.ACTIVITY_RECOGNITION,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+            };
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            permissions = new String[]{android.Manifest.permission.ACTIVITY_RECOGNITION};
+        } else {
+            startStepService();
+            return;
+        }
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        for (String p : permissions) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, p) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+
+        if (!listPermissionsNeeded.isEmpty()) {
+            androidx.core.app.ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[0]), 100);
+        } else {
+            startStepService();
+        }
+    }
+
+    private void startStepService() {
+        Intent serviceIntent = new Intent(this, com.gymtrack.app.services.StepCounterService.class);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100) {
+            // Incluso si no da todos los permisos, intentamos iniciar el servicio
+            // El servicio ya tiene comprobaciones internas para el sensor
+            startStepService();
         }
     }
 

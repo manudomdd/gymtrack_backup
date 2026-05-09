@@ -116,6 +116,59 @@
 
                 <Space android:layout_width="wrap_content" android:layout_height="25dp" />
 
+                <!-- Rol de Usuario -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="¿Qué tipo de usuario eres?"
+                    android:textSize="14sp"
+                    android:textColor="@color/white_54"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rg_role"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <RadioButton
+                        android:id="@+id/rb_cliente"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Cliente"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/magenta"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/rb_entrenador"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Entrenador"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/magenta" />
+                </RadioGroup>
+
+                <Space android:layout_width="wrap_content" android:layout_height="25dp" />
+
+                <!-- Código de Entrenador (Solo para Clientes) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_trainer_code"
+                    style="@style/Widget.GymTrack.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Código de Entrenador (Opcional)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_trainer_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textAllCaps="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <!-- Divider -->
                 <View
                     android:layout_width="match_parent"

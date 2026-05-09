@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -74,6 +75,12 @@ public class AuthRepository {
                             String token = jsonResponse.get("token").getAsString();
                             prefs.edit().putString(KEY_TOKEN, token).apply();
                         }
+                        if (jsonResponse.has("tipoUsuario") && !jsonResponse.get("tipoUsuario").isJsonNull()) {
+                            String role = jsonResponse.get("tipoUsuario").getAsString();
+                            prefs.edit().putString("role", role).apply();
+                        } else {
+                            prefs.edit().putString("role", "CLIENTE").apply();
+                        }
                         callback.onSuccess();
                     } else {
                         callback.onError("Credenciales inválidas");
@@ -120,5 +127,39 @@ public class AuthRepository {
     /** Devuelve el token JWT almacenado, o null si no existe */
     public String getToken() {
         return prefs.getString(KEY_TOKEN, null);
+    }
+
+    /** Devuelve el rol del usuario (CLIENTE o ENTRENADOR) */
+    public String getRole() {
+        return prefs.getString("role", "CLIENTE");
+    }
+
+    public interface ProgressCallback {
+        void onSuccess(Map<String, Double> metrics);
+        void onError(String message);
+    }
+
+    public void getClientProgress(long clientId, ProgressCallback callback) {
+        new Thread(() -> {
+            try {
+                Request request = new Request.Builder()
+                        .url("http://10.0.2.2:8080/api/trainer/client/" + clientId + "/progress")
+                        .addHeader("Authorization", "Bearer " + getToken())
+                        .get()
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Type type = new com.google.gson.reflect.TypeToken<Map<String, Double>>(){}.getType();
+                        Map<String, Double> metrics = gson.fromJson(response.body().string(), type);
+                        callback.onSuccess(metrics);
+                    } else {
+                        callback.onError("Error al obtener métricas");
+                    }
+                }
+            } catch (IOException e) {
+                callback.onError("Error de conexión: " + e.getMessage());
+            }
+        }).start();
     }
 }
