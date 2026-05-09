@@ -34,6 +34,12 @@ public class ClientController {
         return userOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Metodo mediante el cual un cliente podrá actualizar los datos de su perfil.
+     * @param auth
+     * @param updateData
+     * @return
+     */
     @PutMapping("/profile")
     public ResponseEntity<User> updateProfile(Authentication auth, @RequestBody User updateData) {
         Optional<User> userOpt = userRepo.findByEmail(auth.getName());
@@ -44,8 +50,7 @@ public class ClientController {
             user.setPeso(updateData.getPeso());
             user.setAltura(updateData.getAltura());
 
-            // Solo actualizamos NEAT si viene un valor distinto de cero (o si se desea
-            // mantener)
+            // Solo actualizamos NEAT si viene un valor distinto de cero (o si se desea mantener).
             if (updateData.getNeat() > 0) {
                 user.setNeat(updateData.getNeat());
             }
@@ -55,6 +60,11 @@ public class ClientController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Enpoint el cual sirve para listar los entrenamientos. 
+     * @param auth
+     * @return
+     */
     @GetMapping("/workouts")
     public ResponseEntity<List<WorkoutSession>> getWorkouts(Authentication auth) {
         Optional<User> userOpt = userRepo.findByEmail(auth.getName());
@@ -64,6 +74,12 @@ public class ClientController {
         return ResponseEntity.status(401).build();
     }
 
+    /**
+     * Endpoint con metodo para añadir un nuevo ejercicio al entrenamiento.
+     * @param auth
+     * @param session
+     * @return
+     */
     @PostMapping("/workouts")
     public ResponseEntity<WorkoutSession> addWorkout(Authentication auth, @RequestBody WorkoutSession session) {
         Optional<User> userOpt = userRepo.findByEmail(auth.getName());
@@ -74,6 +90,12 @@ public class ClientController {
         return ResponseEntity.status(401).build();
     }
 
+    /**
+     * Metodo para añadir un registro de sueño (numero de 1 a 10 calidad de sueño, con numero de horas dormidas).
+     * @param auth
+     * @param log
+     * @return
+     */
     @PostMapping("/health/sleep")
     public ResponseEntity<SleepLog> addSleepLog(Authentication auth, @RequestBody SleepLog log) {
         Optional<User> userOpt = userRepo.findByEmail(auth.getName());
@@ -84,6 +106,12 @@ public class ClientController {
         return ResponseEntity.status(401).build();
     }
 
+    /**
+     * Metodo para añadir un nuevo registro de pasos. 
+     * @param auth
+     * @param log
+     * @return
+     */
     @PostMapping("/health/steps")
     public ResponseEntity<StepLog> addStepLog(Authentication auth, @RequestBody StepLog log) {
         Optional<User> userOpt = userRepo.findByEmail(auth.getName());
@@ -94,6 +122,12 @@ public class ClientController {
         return ResponseEntity.status(401).build();
     }
 
+    /**
+     * Metodo para enlazar un cliente con su correspondiente entrenador. 
+     * @param auth
+     * @param code
+     * @return
+     */
     @PostMapping("/link-trainer/{code}")
     public ResponseEntity<String> linkTrainer(Authentication auth, @PathVariable String code) {
         Optional<User> userOpt = userRepo.findByEmail(auth.getName());

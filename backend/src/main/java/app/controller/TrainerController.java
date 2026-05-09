@@ -23,7 +23,11 @@ public class TrainerController {
     @Autowired
     private WorkoutService workoutService;
 
-    // Obtener los clientes de este entrenador
+    /**
+     * Obtiene los clientes asignados aun entrenador determinado.
+     * @param auth
+     * @return
+     */
     @GetMapping("/clients")
     public ResponseEntity<List<User>> getClients(Authentication auth) {
         Optional<User> trainerOpt = userRepo.findByEmail(auth.getName());
@@ -33,7 +37,12 @@ public class TrainerController {
         return ResponseEntity.status(401).build();
     }
 
-    // Asignar un cliente al entrenador
+    /**
+     * Metodo para asignar un cliente a un entrenador.
+     * @param auth
+     * @param clientId
+     * @return
+     */
     @PostMapping("/assignClient/{clientId}")
     public ResponseEntity<String> assignClient(Authentication auth, @PathVariable Long clientId) {
         Optional<User> trainerOpt = userRepo.findByEmail(auth.getName());
@@ -48,7 +57,12 @@ public class TrainerController {
         return ResponseEntity.badRequest().body("Entrenador o Cliente no encontrados.");
     }
 
-    // Obtener las métricas de progreso de un cliente
+    /**
+     * Metodo para obtener las metricas de progeso de un determinado cliente. 
+     * @param auth
+     * @param clientId
+     * @return
+     */
     @GetMapping("/client/{clientId}/progress")
     public ResponseEntity<Map<String, Double>> getClientProgress(Authentication auth, @PathVariable Long clientId) {
         // Validar si el cliente pertenece a este entrenador
@@ -64,7 +78,13 @@ public class TrainerController {
         return ResponseEntity.status(403).build();
     }
 
-    // Asignar un entrenamiento a un cliente
+    /**
+     * Metodo para asignar un entrenamiento a un cliente. (NO FUNCIONA POR AHORA).
+     * @param auth
+     * @param clientId
+     * @param session
+     * @return
+     */
     @PostMapping("/client/{clientId}/workouts")
     public ResponseEntity<WorkoutSession> assignWorkout(Authentication auth, @PathVariable Long clientId,
             @RequestBody WorkoutSession session) {

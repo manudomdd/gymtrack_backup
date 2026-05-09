@@ -43,7 +43,7 @@ public class WorkoutService {
             String muscleGroup = entry.getKey();
             List<WorkoutSession> sessions = entry.getValue();
 
-            // Ordenar por fecha
+            // Ordenar por fecha (Imprescidible para determinar si ha habido progreso).
             sessions.sort((s1, s2) -> s1.getDate().compareTo(s2.getDate()));
 
             if (sessions.size() < 2) {
