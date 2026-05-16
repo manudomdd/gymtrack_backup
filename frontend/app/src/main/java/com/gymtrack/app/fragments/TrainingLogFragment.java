@@ -136,12 +136,13 @@ public class TrainingLogFragment extends Fragment {
         refreshWorkoutList();
     }
 
+    /**
+     * Devuelve true si el número de día pasado coincide con el día actualmente
+     * seleccionado en selectedDate. Se usa para resaltar la celda correcta en el
+     * calendario sin importar qué mes se está visualizando.
+     */
     private boolean isSameDay(Calendar cal, int day) {
-        Calendar today = Calendar.getInstance();
-        return cal.get(Calendar.YEAR) == today.get(Calendar.YEAR)
-                && cal.get(Calendar.MONTH) == today.get(Calendar.MONTH)
-                && day == today.get(Calendar.DAY_OF_MONTH)
-                && cal.get(Calendar.DAY_OF_MONTH) == day;
+        return cal.get(Calendar.DAY_OF_MONTH) == day;
     }
 
     /** Filtra y muestra los entrenamientos para el día seleccionado */

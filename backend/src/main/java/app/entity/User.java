@@ -99,7 +99,10 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER"));
+		String role = (tipoUsuario != null)
+				? "ROLE_" + tipoUsuario.name()
+				: "ROLE_CLIENTE";
+		return java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority(role));
 	}
 
 	@Override

@@ -79,11 +79,13 @@ public class TrainerController {
     }
 
     /**
-     * Metodo para asignar un entrenamiento a un cliente. (NO FUNCIONA POR AHORA).
-     * @param auth
-     * @param clientId
-     * @param session
-     * @return
+     * Asigna una sesión de entrenamiento a un cliente del entrenador autenticado.
+     * El cliente debe estar vinculado al entrenador; de lo contrario se devuelve 403.
+     *
+     * @param auth     autenticación del entrenador
+     * @param clientId ID del cliente destinatario
+     * @param session  datos de la sesión a asignar
+     * @return la sesión guardada o 403 si no hay relación entrenador-cliente
      */
     @PostMapping("/client/{clientId}/workouts")
     public ResponseEntity<WorkoutSession> assignWorkout(Authentication auth, @PathVariable Long clientId,
@@ -92,9 +94,10 @@ public class TrainerController {
         Optional<User> clientOpt = userRepo.findById(clientId);
 
         if (trainerOpt.isPresent() && clientOpt.isPresent()) {
-            if (clientOpt.get().getTrainer() != null
-                    && clientOpt.get().getTrainer().getId().equals(trainerOpt.get().getId())) {
-                session.setUser(clientOpt.get());
+            User client = clientOpt.get();
+            if (client.getTrainer() != null
+                    && client.getTrainer().getId().equals(trainerOpt.get().getId())) {
+                session.setUser(client);
                 return ResponseEntity.ok(workoutService.saveSession(session));
             }
         }
