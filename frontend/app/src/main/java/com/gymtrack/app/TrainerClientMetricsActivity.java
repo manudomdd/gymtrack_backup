@@ -50,12 +50,12 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> finish());
 
-        // Contenedor de salud (creado programáticamente debajo de los de progreso)
+        // Contenedor de salud (se añade a ll_scroll_content para evitar ClassCastException)
         healthContainer = new LinearLayout(this);
         healthContainer.setOrientation(LinearLayout.VERTICAL);
         healthContainer.setPadding(0, 24, 0, 0);
-        // Se añade al padre de metricsContainer para aparecer debajo
-        ((LinearLayout) metricsContainer.getParent()).addView(healthContainer);
+        LinearLayout scrollContent = findViewById(R.id.ll_scroll_content);
+        scrollContent.addView(healthContainer);
 
         if (clientId != -1) {
             fetchMetrics(clientId);

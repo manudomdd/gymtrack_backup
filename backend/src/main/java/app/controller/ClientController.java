@@ -115,7 +115,9 @@ public class ClientController {
         if (!session.getUser().getId().equals(userOpt.get().getId())) {
             return ResponseEntity.status(403).build();
         }
-        session.setActualSets(update.getActualSets());
+        session.setReps(update.getReps());
+        session.setPeso(update.getPeso());
+        session.setRir(update.getRir());
         session.setCompleted(update.isCompleted());
         return ResponseEntity.ok(workoutService.saveSession(session));
     }

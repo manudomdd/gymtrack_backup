@@ -129,4 +129,24 @@ public class TrainerController {
         }
         return ResponseEntity.status(403).build();
     }
+
+    /**
+     * Obtiene los entrenamientos de un cliente vinculado al entrenador autenticado.
+     * Permite visualizar el diario de entrenamiento del cliente en tiempo real.
+     */
+    @GetMapping("/client/{clientId}/workouts")
+    public ResponseEntity<List<WorkoutSession>> getClientWorkouts(
+            Authentication auth, @PathVariable Long clientId) {
+        Optional<User> trainerOpt = userRepo.findByEmail(auth.getName());
+        Optional<User> clientOpt = userRepo.findById(clientId);
+
+        if (trainerOpt.isPresent() && clientOpt.isPresent()) {
+            User client = clientOpt.get();
+            if (client.getTrainer() != null
+                    && client.getTrainer().getId().equals(trainerOpt.get().getId())) {
+                return ResponseEntity.ok(workoutService.getSessionsByUser(clientId));
+            }
+        }
+        return ResponseEntity.status(403).build();
+    }
 }

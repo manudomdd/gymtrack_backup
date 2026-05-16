@@ -26,14 +26,6 @@ public class WorkoutSession {
     private String comment;
     private boolean completed;
 
-    /** JSON serializado: [{"reps":8,"peso":80.0,"rir":2}, ...] — objetivo fijado por el entrenador. */
-    @jakarta.persistence.Column(columnDefinition = "TEXT")
-    private String plannedSets;
-
-    /** JSON serializado: [{"reps":7}, ...] — ejecución real registrada por el cliente. */
-    @jakarta.persistence.Column(columnDefinition = "TEXT")
-    private String actualSets;
-
     public WorkoutSession() {
     }
 
@@ -125,19 +117,4 @@ public class WorkoutSession {
         this.completed = completed;
     }
 
-    public String getPlannedSets() {
-        return plannedSets;
-    }
-
-    public void setPlannedSets(String plannedSets) {
-        this.plannedSets = plannedSets;
-    }
-
-    public String getActualSets() {
-        return actualSets;
-    }
-
-    public void setActualSets(String actualSets) {
-        this.actualSets = actualSets;
-    }
 }

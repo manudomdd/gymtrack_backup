@@ -30,11 +30,19 @@
         android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/ll_metrics_container"
+            android:id="@+id/ll_scroll_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <!-- Dynamic content injected here -->
+
+            <LinearLayout
+                android:id="@+id/ll_metrics_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- Dynamic content injected here -->
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 
