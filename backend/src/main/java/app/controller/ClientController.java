@@ -91,6 +91,36 @@ public class ClientController {
     }
 
     /**
+     * Permite al cliente registrar la ejecución real (actualSets) de una sesión
+     * que el entrenador le ha asignado previamente.
+     * Solo el propietario de la sesión puede actualizarla.
+     *
+     * @param auth   usuario autenticado
+     * @param id     ID de la sesión a actualizar
+     * @param update objeto con los campos actualSets y completed
+     * @return sesión actualizada o 403/404 si no procede
+     */
+    @PutMapping("/workouts/{id}")
+    public ResponseEntity<?> updateWorkoutExecution(Authentication auth,
+            @PathVariable Long id, @RequestBody WorkoutSession update) {
+        Optional<User> userOpt = userRepo.findByEmail(auth.getName());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(401).build();
+        }
+        Optional<WorkoutSession> sessionOpt = workoutService.findById(id);
+        if (sessionOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        WorkoutSession session = sessionOpt.get();
+        if (!session.getUser().getId().equals(userOpt.get().getId())) {
+            return ResponseEntity.status(403).build();
+        }
+        session.setActualSets(update.getActualSets());
+        session.setCompleted(update.isCompleted());
+        return ResponseEntity.ok(workoutService.saveSession(session));
+    }
+
+    /**
      * Metodo para añadir un registro de sueño (numero de 1 a 10 calidad de sueño, con numero de horas dormidas).
      * @param auth
      * @param log

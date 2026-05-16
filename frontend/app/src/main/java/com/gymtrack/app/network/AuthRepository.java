@@ -162,4 +162,38 @@ public class AuthRepository {
             }
         }).start();
     }
+
+    /** Callback para obtener los datos de salud de un cliente */
+    public interface HealthCallback {
+        void onSuccess(JsonObject health);
+        void onError(String message);
+    }
+
+    /**
+     * Obtiene los registros de salud (sueño y pasos) de un cliente vinculado.
+     * Endpoint: GET /api/trainer/client/{clientId}/health
+     */
+    public void getClientHealth(long clientId, HealthCallback callback) {
+        new Thread(() -> {
+            try {
+                Request request = new Request.Builder()
+                        .url("http://10.0.2.2:8080/api/trainer/client/" + clientId + "/health")
+                        .addHeader("Authorization", "Bearer " + getToken())
+                        .get()
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        JsonObject health = gson.fromJson(response.body().string(), JsonObject.class);
+                        callback.onSuccess(health);
+                    } else {
+                        callback.onError("Error al obtener datos de salud: " + response.code());
+                    }
+                }
+            } catch (IOException e) {
+                callback.onError("Error de conexión: " + e.getMessage());
+            }
+        }).start();
+    }
 }
+

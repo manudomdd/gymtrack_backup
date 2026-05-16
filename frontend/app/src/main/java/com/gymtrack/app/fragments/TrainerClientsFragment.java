@@ -1,13 +1,18 @@
 package com.gymtrack.app.fragments;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +53,7 @@ import okhttp3.Response;
  * - Buscador en tiempo real por nombre o email
  * - RecyclerView con tarjeta por cliente
  * - Diálogo de detalles del cliente
- * - Diálogo para asignar una rutina/entrenamiento a un cliente
+ * - Diálogo para asignar rutina con fecha exacta y series granulares por serie
  */
 public class TrainerClientsFragment extends Fragment {
 
@@ -73,23 +78,15 @@ public class TrainerClientsFragment extends Fragment {
         layoutEmpty = view.findViewById(R.id.layout_empty);
         TextInputEditText etSearch = view.findViewById(R.id.et_search);
 
-        // Se pasan dos callbacks: uno para el detalle del cliente y otro para asignar rutina.
         adapter = new ClientAdapter(new ArrayList<>(), this::showClientDetail, this::showAssignRoutineDialog);
         rvClients.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvClients.setAdapter(adapter);
 
         fetchClients();
 
-        // Búsqueda en tiempo real
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int st, int c, int a) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void afterTextChanged(Editable s) {}
             @Override
             public void onTextChanged(CharSequence s, int st, int b, int c) {
                 filterClients(s.toString().toLowerCase().trim());
@@ -108,8 +105,7 @@ public class TrainerClientsFragment extends Fragment {
                 Request request = new Request.Builder()
                         .url("http://10.0.2.2:8080/api/trainer/clients")
                         .addHeader("Authorization", "Bearer " + auth.getToken())
-                        .get()
-                        .build();
+                        .get().build();
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -161,45 +157,121 @@ public class TrainerClientsFragment extends Fragment {
     }
 
     /**
-     * Muestra el diálogo para asignar una rutina/sesión de entrenamiento a un cliente.
-     * Corregido: ahora se invoca correctamente desde el callback del adapter.
+     * Diálogo de asignación de rutina con:
+     * - DatePickerDialog para fecha exacta (sincronización con el calendario del cliente)
+     * - Entrada de número de series
+     * - Botón "Configurar series" que genera filas dinámicas (reps / kg / rir por serie)
+     * - Construye el JSON plannedSets y lo envía al endpoint del entrenador
      */
     private void showAssignRoutineDialog(Map<String, Object> clientData) {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_workout, null);
+        // Contenedor raíz con ScrollView para acomodar las series dinámicas
+        ScrollView scrollView = new ScrollView(requireContext());
+        LinearLayout container = new LinearLayout(requireContext());
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(32, 24, 32, 24);
+        scrollView.addView(container);
 
-        // Contenedor para Checkboxes de días
-        LinearLayout daysContainer = new LinearLayout(requireContext());
-        daysContainer.setOrientation(LinearLayout.VERTICAL);
-        daysContainer.setPadding(20, 20, 20, 20);
+        // ── Selección de fecha exacta ──────────────────────────────────────
+        final String[] selectedDate = {
+                new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Calendar.getInstance().getTime())
+        };
+        Button btnDate = new Button(requireContext());
+        btnDate.setText("📅 Fecha: " + selectedDate[0]);
+        container.addView(btnDate);
 
-        String[] days = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
-        android.widget.CheckBox[] checkBoxes = new android.widget.CheckBox[7];
-        for (int i = 0; i < 7; i++) {
-            checkBoxes[i] = new android.widget.CheckBox(requireContext());
-            checkBoxes[i].setText(days[i]);
-            checkBoxes[i].setTextColor(0xFFFFFFFF);
-            daysContainer.addView(checkBoxes[i]);
-        }
+        btnDate.setOnClickListener(v -> {
+            Calendar c = Calendar.getInstance();
+            new DatePickerDialog(requireContext(), (view, y, m, d) -> {
+                selectedDate[0] = String.format(Locale.US, "%04d-%02d-%02d", y, m + 1, d);
+                btnDate.setText("📅 Fecha: " + selectedDate[0]);
+            }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        });
 
-        ((LinearLayout) dialogView).addView(daysContainer, 0);
+        // ── Nombre del ejercicio ───────────────────────────────────────────
+        TextInputEditText etExercise = new TextInputEditText(requireContext());
+        etExercise.setHint("Ejercicio (ej: Press banca)");
+        container.addView(etExercise);
 
-        TextInputEditText etExercise = dialogView.findViewById(R.id.et_exercise);
-        android.widget.Spinner spinnerMuscleGroup = dialogView.findViewById(R.id.spinner_muscle_group);
-        TextInputEditText etPeso = dialogView.findViewById(R.id.et_peso);
-        TextInputEditText etSets = dialogView.findViewById(R.id.et_sets);
-        TextInputEditText etReps = dialogView.findViewById(R.id.et_reps);
-        TextInputEditText etRir = dialogView.findViewById(R.id.et_rir);
-
-        // Configurar Spinner de Grupos Musculares
+        // ── Grupo muscular ─────────────────────────────────────────────────
+        Spinner spinnerMuscle = new Spinner(requireContext());
         String[] groups = {"Pecho", "Espalda", "Hombro", "Bíceps", "Tríceps", "Cuádriceps", "Femorales"};
-        android.widget.ArrayAdapter<String> groupAdapter = new android.widget.ArrayAdapter<>(
+        ArrayAdapter<String> muscleAdapter = new ArrayAdapter<>(
                 requireContext(), android.R.layout.simple_spinner_item, groups);
-        groupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerMuscleGroup.setAdapter(groupAdapter);
+        muscleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMuscle.setAdapter(muscleAdapter);
+        container.addView(spinnerMuscle);
+
+        // ── Número de series ───────────────────────────────────────────────
+        TextInputEditText etNumSets = new TextInputEditText(requireContext());
+        etNumSets.setHint("Número de series");
+        etNumSets.setInputType(InputType.TYPE_CLASS_NUMBER);
+        container.addView(etNumSets);
+
+        // ── Contenedor dinámico de filas por serie ─────────────────────────
+        LinearLayout seriesContainer = new LinearLayout(requireContext());
+        seriesContainer.setOrientation(LinearLayout.VERTICAL);
+        container.addView(seriesContainer);
+
+        // Listas para capturar los campos de cada serie
+        List<TextInputEditText> repsFields = new ArrayList<>();
+        List<TextInputEditText> pesoFields = new ArrayList<>();
+        List<TextInputEditText> rirFields = new ArrayList<>();
+
+        Button btnBuild = new Button(requireContext());
+        btnBuild.setText("⚙ Configurar series");
+        container.addView(btnBuild);
+
+        btnBuild.setOnClickListener(v -> {
+            String numStr = etNumSets.getText() != null ? etNumSets.getText().toString().trim() : "";
+            if (numStr.isEmpty() || Integer.parseInt(numStr) <= 0) {
+                Toast.makeText(getContext(), "Indica el número de series", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int numSets = Integer.parseInt(numStr);
+            seriesContainer.removeAllViews();
+            repsFields.clear();
+            pesoFields.clear();
+            rirFields.clear();
+
+            for (int i = 0; i < numSets; i++) {
+                TextView label = new TextView(requireContext());
+                label.setText("  Serie " + (i + 1));
+                label.setTextColor(0xFFCCCCCC);
+                seriesContainer.addView(label);
+
+                LinearLayout row = new LinearLayout(requireContext());
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                row.setPadding(0, 4, 0, 4);
+
+                TextInputEditText etReps = new TextInputEditText(requireContext());
+                etReps.setHint("Reps");
+                etReps.setInputType(InputType.TYPE_CLASS_NUMBER);
+                etReps.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+                TextInputEditText etPeso = new TextInputEditText(requireContext());
+                etPeso.setHint("Kg");
+                etPeso.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                etPeso.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+                TextInputEditText etRir = new TextInputEditText(requireContext());
+                etRir.setHint("RIR");
+                etRir.setInputType(InputType.TYPE_CLASS_NUMBER);
+                etRir.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+                row.addView(etReps);
+                row.addView(etPeso);
+                row.addView(etRir);
+                seriesContainer.addView(row);
+
+                repsFields.add(etReps);
+                pesoFields.add(etPeso);
+                rirFields.add(etRir);
+            }
+        });
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Asignar Rutina a " + clientData.get("nombre"))
-                .setView(dialogView)
+                .setView(scrollView)
                 .setNegativeButton("Cancelar", null)
                 .setPositiveButton("Asignar", (dialog, which) -> {
                     Object idObj = clientData.get("id");
@@ -207,54 +279,52 @@ public class TrainerClientsFragment extends Fragment {
                     if (clientId == -1) return;
 
                     String exercise = etExercise.getText() != null ? etExercise.getText().toString().trim() : "";
-                    String pesoStr = etPeso.getText() != null ? etPeso.getText().toString().trim() : "";
-                    String setsStr = etSets.getText() != null ? etSets.getText().toString().trim() : "";
-                    String repsStr = etReps.getText() != null ? etReps.getText().toString().trim() : "";
-                    String rirStr = etRir.getText() != null ? etRir.getText().toString().trim() : "";
-
-                    if (exercise.isEmpty() || pesoStr.isEmpty() || setsStr.isEmpty()
-                            || repsStr.isEmpty() || rirStr.isEmpty()) {
-                        Toast.makeText(getContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+                    if (exercise.isEmpty()) {
+                        Toast.makeText(getContext(), "Introduce el nombre del ejercicio", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (repsFields.isEmpty()) {
+                        Toast.makeText(getContext(), "Configura las series primero", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    boolean daySelected = false;
-                    for (int i = 0; i < 7; i++) {
-                        if (checkBoxes[i].isChecked()) {
-                            daySelected = true;
-                            JsonObject workout = new JsonObject();
-                            workout.addProperty("exercise", exercise);
-                            workout.addProperty("muscleGroup", spinnerMuscleGroup.getSelectedItem().toString());
-                            workout.addProperty("peso", Double.parseDouble(pesoStr));
-                            workout.addProperty("sets", Integer.parseInt(setsStr));
-                            workout.addProperty("reps", Integer.parseInt(repsStr));
-                            workout.addProperty("rir", Integer.parseInt(rirStr));
-                            workout.addProperty("completed", false);
+                    // Construir plannedSets como JSON array
+                    JsonArray plannedSets = new JsonArray();
+                    double maxPeso = 0;
+                    for (int i = 0; i < repsFields.size(); i++) {
+                        String repsStr = repsFields.get(i).getText() != null ? repsFields.get(i).getText().toString().trim() : "0";
+                        String pesoStr = pesoFields.get(i).getText() != null ? pesoFields.get(i).getText().toString().trim() : "0";
+                        String rirStr = rirFields.get(i).getText() != null ? rirFields.get(i).getText().toString().trim() : "0";
 
-                            Calendar targetDate = getNextDayOfWeek(i);
-                            workout.addProperty("date",
-                                    new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(targetDate.getTime()));
+                        int reps = repsStr.isEmpty() ? 0 : Integer.parseInt(repsStr);
+                        double peso = pesoStr.isEmpty() ? 0.0 : Double.parseDouble(pesoStr);
+                        int rir = rirStr.isEmpty() ? 0 : Integer.parseInt(rirStr);
 
-                            assignWorkoutToClient(clientId, workout);
-                        }
+                        if (peso > maxPeso) maxPeso = peso;
+
+                        JsonObject serie = new JsonObject();
+                        serie.addProperty("reps", reps);
+                        serie.addProperty("peso", peso);
+                        serie.addProperty("rir", rir);
+                        plannedSets.add(serie);
                     }
-                    if (!daySelected) {
-                        Toast.makeText(getContext(), "Selecciona al menos un día", Toast.LENGTH_SHORT).show();
-                    }
+
+                    JsonObject workout = new JsonObject();
+                    workout.addProperty("exercise", exercise);
+                    workout.addProperty("muscleGroup", spinnerMuscle.getSelectedItem().toString());
+                    workout.addProperty("date", selectedDate[0]);
+                    workout.addProperty("sets", repsFields.size());
+                    // Peso máximo de las series como campo peso para métricas de progreso
+                    workout.addProperty("peso", maxPeso);
+                    workout.addProperty("reps", 0);   // Detalle en plannedSets
+                    workout.addProperty("rir", 0);
+                    workout.addProperty("completed", false);
+                    workout.addProperty("plannedSets", plannedSets.toString());
+                    workout.addProperty("actualSets", "[]");
+
+                    assignWorkoutToClient(clientId, workout);
                 })
                 .show();
-    }
-
-    private Calendar getNextDayOfWeek(int dayIndex) {
-        // dayIndex: 0=Lunes, ..., 6=Domingo
-        // Calendar.MONDAY = 2, ..., Calendar.SUNDAY = 1
-        int targetCalDay = (dayIndex == 6) ? Calendar.SUNDAY : dayIndex + 2;
-
-        Calendar cal = Calendar.getInstance();
-        while (cal.get(Calendar.DAY_OF_WEEK) != targetCalDay) {
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        return cal;
     }
 
     private void assignWorkoutToClient(long clientId, JsonObject workout) {
@@ -268,17 +338,15 @@ public class TrainerClientsFragment extends Fragment {
                 Request request = new Request.Builder()
                         .url("http://10.0.2.2:8080/api/trainer/client/" + clientId + "/workouts")
                         .addHeader("Authorization", "Bearer " + auth.getToken())
-                        .post(body)
-                        .build();
+                        .post(body).build();
 
                 try (Response response = client.newCall(request).execute()) {
                     if (getActivity() == null) return;
                     getActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Entrenamiento asignado con éxito", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Rutina asignada con éxito", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getContext(), "Error al asignar entrenamiento: " + response.code(),
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Error al asignar: " + response.code(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -292,15 +360,10 @@ public class TrainerClientsFragment extends Fragment {
 
     private void showClientDetail(Map<String, Object> client) {
         String nombre = (String) client.get("nombre");
-        String email = (String) client.get("email");
-        Object peso = client.get("peso");
-        Object altura = client.get("altura");
-        Object id = client.get("id");
-
-        String message = "Email: " + email
-                + "\nPeso: " + peso + " kg"
-                + "\nAltura: " + altura + " cm"
-                + "\nNº Cliente: " + id;
+        String message = "Email: " + client.get("email")
+                + "\nPeso: " + client.get("peso") + " kg"
+                + "\nAltura: " + client.get("altura") + " cm"
+                + "\nNº Cliente: " + client.get("id");
 
         new AlertDialog.Builder(requireContext())
                 .setTitle(nombre)
@@ -310,11 +373,13 @@ public class TrainerClientsFragment extends Fragment {
                 .show();
     }
 
-    // ─── Adapter ──────────────────────────────────────────────────────────────
+    // ─── Interfaces ────────────────────────────────────────────────────────────
 
     interface OnClientClick {
         void onClick(Map<String, Object> client);
     }
+
+    // ─── Adapter ───────────────────────────────────────────────────────────────
 
     private static class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.VH> {
 
@@ -323,8 +388,7 @@ public class TrainerClientsFragment extends Fragment {
         private final OnClientClick assignListener;
 
         ClientAdapter(List<Map<String, Object>> data,
-                OnClientClick detailListener,
-                OnClientClick assignListener) {
+                OnClientClick detailListener, OnClientClick assignListener) {
             this.data = data;
             this.detailListener = detailListener;
             this.assignListener = assignListener;
@@ -353,8 +417,6 @@ public class TrainerClientsFragment extends Fragment {
             h.tvAvatarLetter.setText(nombre.substring(0, 1).toUpperCase());
             h.tvPeso.setText(c.get("peso") + " kg");
             h.tvAltura.setText(c.get("altura") + " cm");
-
-            // Campos que no provee el backend: se muestran como valor neutro
             h.tvRutina.setText("—");
             h.tvEstado.setText("—");
             h.tvLastWorkout.setText("—");
@@ -373,8 +435,6 @@ public class TrainerClientsFragment extends Fragment {
             });
 
             h.btnPlan.setText("Asignar Rutina");
-            // Corrección Bug #1: se usa el callback assignListener directamente,
-            // eliminando el instanceof que siempre fallaba.
             h.btnPlan.setOnClickListener(v -> assignListener.onClick(c));
         }
 
@@ -384,8 +444,8 @@ public class TrainerClientsFragment extends Fragment {
         }
 
         static class VH extends RecyclerView.ViewHolder {
-            TextView tvName, tvEmail, tvAvatarLetter, tvRutina, tvLastWorkout,
-                    tvPeso, tvAltura, tvEstado;
+            TextView tvName, tvEmail, tvAvatarLetter, tvRutina,
+                    tvLastWorkout, tvPeso, tvAltura, tvEstado;
             Button btnDetails, btnWorkouts, btnPlan;
 
             VH(@NonNull View v) {
