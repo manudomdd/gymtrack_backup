@@ -42,4 +42,4 @@ El proyecto está dividido en una arquitectura Cliente-Servidor robusta:
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone [https://github.com/manudomdd/GymTrack.git](https://github.com/manudomdd/GymTrack.git)
+   git clone [https://github.com/manudomdd/GymTrack.git] (https://github.com/manudomdd/GymTrack.git)
