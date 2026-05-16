@@ -116,4 +116,5 @@ public class WorkoutSession {
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+
 }

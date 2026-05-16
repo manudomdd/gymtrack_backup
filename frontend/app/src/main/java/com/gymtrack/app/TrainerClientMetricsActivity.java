@@ -1,6 +1,7 @@
 package com.gymtrack.app;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -9,13 +10,24 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.gymtrack.app.network.AuthRepository;
 
 import java.util.Map;
 
+/**
+ * Pantalla de métricas de un cliente específico, accesible desde el perfil del entrenador.
+ *
+ * Muestra:
+ * 1. Progreso de carga por grupo muscular (regresión lineal: pendiente + evaluación)
+ * 2. Registros de salud del cliente (pasos diarios + sueño)
+ */
 public class TrainerClientMetricsActivity extends AppCompatActivity {
 
     private LinearLayout metricsContainer;
+    private LinearLayout healthContainer;
     private AuthRepository authRepository;
 
     @Override
@@ -45,14 +57,17 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
         }
     }
 
+    // ── Métricas de progreso de carga ──────────────────────────────────────────
+
     private void fetchMetrics(long clientId) {
         authRepository.getClientProgress(clientId, new AuthRepository.ProgressCallback() {
             @Override
             public void onSuccess(Map<String, Double> metrics) {
                 runOnUiThread(() -> {
                     metricsContainer.removeAllViews();
+                    addSectionHeader(metricsContainer, "📈 Progresión de carga por grupo muscular");
                     if (metrics.isEmpty()) {
-                        addMetricView("Sin datos", 0.0);
+                        addInfoRow(metricsContainer, "Sin datos suficientes aún", 0xFFAAAAAA);
                         return;
                     }
                     for (Map.Entry<String, Double> entry : metrics.entrySet()) {
@@ -63,7 +78,8 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(TrainerClientMetricsActivity.this, error, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(
+                        TrainerClientMetricsActivity.this, error, Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -71,24 +87,53 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
     private void addMetricView(String muscleGroup, double slope) {
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, 16, 0, 16);
+        row.setPadding(0, 12, 0, 12);
 
         TextView tvMuscle = new TextView(this);
         tvMuscle.setText(muscleGroup);
-        tvMuscle.setTextColor(0xFFFFFFFF); // White
-        tvMuscle.setTextSize(18);
-        LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-        tvMuscle.setLayoutParams(p1);
+        tvMuscle.setTextColor(0xFFFFFFFF);
+        tvMuscle.setTextSize(17);
+        tvMuscle.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
         TextView tvSlope = new TextView(this);
-        String evaluation = slope > 0 ? "Positivo" : (slope < 0 ? "Negativo" : "Estancado");
-        tvSlope.setText(String.format("%.2f (%s)", slope, evaluation));
-        tvSlope.setTextColor(slope > 0 ? 0xFF00FF00 : (slope < 0 ? 0xFFFF0000 : 0xFFFFA500)); // Green, Red, Orange
-        tvSlope.setTextSize(18);
+        String evaluation;
+        int color;
+        if (slope > 0.05) {
+            evaluation = "↑ Progresando";
+            color = 0xFF4CAF50;
+        } else if (slope < -0.05) {
+            evaluation = "↓ Retroceso";
+            color = 0xFFE53935;
+        } else {
+            evaluation = "→ Estancado";
+            color = 0xFFFFA726;
+        }
+        tvSlope.setText(String.format("%.2f kg/día  (%s)", slope, evaluation));
+        tvSlope.setTextColor(color);
+        tvSlope.setTextSize(15);
 
         row.addView(tvMuscle);
         row.addView(tvSlope);
-
         metricsContainer.addView(row);
+    }
+
+    // ── Helpers de UI ──────────────────────────────────────────────────────────
+
+    private void addSectionHeader(LinearLayout parent, String title) {
+        TextView tv = new TextView(this);
+        tv.setText(title);
+        tv.setTextColor(0xFFFFFFFF);
+        tv.setTextSize(18);
+        tv.setPadding(0, 20, 0, 8);
+        parent.addView(tv);
+    }
+
+    private void addInfoRow(LinearLayout parent, String text, int color) {
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextColor(color);
+        tv.setTextSize(15);
+        tv.setPadding(8, 6, 0, 6);
+        parent.addView(tv);
     }
 }

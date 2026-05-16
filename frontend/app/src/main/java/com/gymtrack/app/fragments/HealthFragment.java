@@ -84,12 +84,12 @@ public class HealthFragment extends Fragment {
         if (hoursStr.isEmpty())
             return;
 
-        double hours = Double.parseDouble(hoursStr);
+        int hours = (int) Double.parseDouble(hoursStr);
         int quality = (int) spinnerQuality.getSelectedItem();
 
         JsonObject log = new JsonObject();
-        log.addProperty("hours", hours);
-        log.addProperty("quality", quality);
+        log.addProperty("hoursSlept", hours);   // Corregido: era "hours" → no coincidía con SleepLog.hoursSlept
+        log.addProperty("score", quality);       // Corregido: era "quality" → no coincidía con SleepLog.score
 
         String currentDate = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
                 .format(new java.util.Date());
