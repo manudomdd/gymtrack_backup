@@ -78,7 +78,7 @@ public class TrainerClientsFragment extends Fragment {
         layoutEmpty = view.findViewById(R.id.layout_empty);
         TextInputEditText etSearch = view.findViewById(R.id.et_search);
 
-        adapter = new ClientAdapter(new ArrayList<>(), this::showClientDetail, this::openClientDiary);
+        adapter = new ClientAdapter(new ArrayList<>(), this::openClientDiary, this::openBiomarkers);
         rvClients.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvClients.setAdapter(adapter);
 
@@ -121,6 +121,7 @@ public class TrainerClientsFragment extends Fragment {
                             map.put("email", obj.get("email").getAsString());
                             map.put("peso", obj.get("peso").getAsDouble());
                             map.put("altura", obj.get("altura").getAsInt());
+                            map.put("edad", obj.has("edad") && !obj.get("edad").isJsonNull() ? obj.get("edad").getAsInt() : 0);
                             allClients.add(map);
                         }
 
@@ -172,18 +173,13 @@ public class TrainerClientsFragment extends Fragment {
         }
     }
 
-    private void showClientDetail(Map<String, Object> client) {
-        String nombre = (String) client.get("nombre");
-        String message = "Email: " + client.get("email")
-                + "\nPeso: " + client.get("peso") + " kg"
-                + "\nAltura: " + client.get("altura") + " cm"
-                + "\nNº Cliente: " + client.get("id");
+    private void openBiomarkers(Map<String, Object> client) {
+        Object idObj = client.get("id");
+        long clientId = idObj instanceof Number ? ((Number) idObj).longValue() : -1;
+        if (clientId == -1) return;
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle(nombre)
-                .setMessage(message)
-                .setPositiveButton("Cerrar", null)
-                .show();
+        // Aquí se instanciará la nueva pantalla de biomarcadores (Punto 2)
+        Toast.makeText(requireContext(), "Biomarcadores: Próximamente", Toast.LENGTH_SHORT).show();
     }
 
     // ─── Interfaces ────────────────────────────────────────────────────────────
@@ -197,14 +193,14 @@ public class TrainerClientsFragment extends Fragment {
     private static class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.VH> {
 
         private List<Map<String, Object>> data;
-        private final OnClientClick detailListener;
         private final OnClientClick diaryListener;
+        private final OnClientClick biomarkerListener;
 
         ClientAdapter(List<Map<String, Object>> data,
-                OnClientClick detailListener, OnClientClick diaryListener) {
+                OnClientClick diaryListener, OnClientClick biomarkerListener) {
             this.data = data;
-            this.detailListener = detailListener;
             this.diaryListener = diaryListener;
+            this.biomarkerListener = biomarkerListener;
         }
 
         void updateData(List<Map<String, Object>> newData) {
@@ -231,13 +227,12 @@ public class TrainerClientsFragment extends Fragment {
             h.tvPeso.setText(c.get("peso") + " kg");
             h.tvAltura.setText(c.get("altura") + " cm");
             h.tvRutina.setText("—");
-            h.tvEstado.setText("—");
+            h.tvEdad.setText(c.get("edad") + " años");
             h.tvLastWorkout.setText("—");
 
-            h.btnDetails.setOnClickListener(v -> detailListener.onClick(c));
+            h.btnDiary.setOnClickListener(v -> diaryListener.onClick(c));
 
-            h.btnWorkouts.setText("Métricas");
-            h.btnWorkouts.setOnClickListener(v -> {
+            h.btnMetrics.setOnClickListener(v -> {
                 android.content.Intent intent = new android.content.Intent(v.getContext(),
                         com.gymtrack.app.TrainerClientMetricsActivity.class);
                 Object idObj = c.get("id");
@@ -247,8 +242,7 @@ public class TrainerClientsFragment extends Fragment {
                 v.getContext().startActivity(intent);
             });
 
-            h.btnPlan.setText("Diario");
-            h.btnPlan.setOnClickListener(v -> diaryListener.onClick(c));
+            h.btnBiomarkers.setOnClickListener(v -> biomarkerListener.onClick(c));
         }
 
         @Override
@@ -258,8 +252,8 @@ public class TrainerClientsFragment extends Fragment {
 
         static class VH extends RecyclerView.ViewHolder {
             TextView tvName, tvEmail, tvAvatarLetter, tvRutina,
-                    tvLastWorkout, tvPeso, tvAltura, tvEstado;
-            Button btnDetails, btnWorkouts, btnPlan;
+                    tvLastWorkout, tvPeso, tvAltura, tvEdad;
+            Button btnDiary, btnMetrics, btnBiomarkers;
 
             VH(@NonNull View v) {
                 super(v);
@@ -270,10 +264,10 @@ public class TrainerClientsFragment extends Fragment {
                 tvLastWorkout = v.findViewById(R.id.tv_last_workout);
                 tvPeso = v.findViewById(R.id.tv_peso);
                 tvAltura = v.findViewById(R.id.tv_altura);
-                tvEstado = v.findViewById(R.id.tv_estado);
-                btnDetails = v.findViewById(R.id.btn_details);
-                btnWorkouts = v.findViewById(R.id.btn_workouts);
-                btnPlan = v.findViewById(R.id.btn_plan);
+                tvEdad = v.findViewById(R.id.tv_edad);
+                btnDiary = v.findViewById(R.id.btn_diary);
+                btnMetrics = v.findViewById(R.id.btn_metrics);
+                btnBiomarkers = v.findViewById(R.id.btn_biomarkers);
             }
         }
     }
