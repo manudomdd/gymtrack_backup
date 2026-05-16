@@ -3355,6 +3355,7 @@ id jumpToEnd
 id jumpToStart
 id labeled
 id layout
+id layout_data
 id layout_empty
 id left
 id leftToRight
@@ -3645,6 +3646,7 @@ id tv_client_name
 id tv_comment
 id tv_date_header
 id tv_edad
+id tv_empty_message
 id tv_entrenamientos
 id tv_exercise_name
 id tv_hr_value
@@ -3657,8 +3659,11 @@ id tv_reps
 id tv_rir
 id tv_rutina
 id tv_sets
+id tv_sleep_hours
+id tv_sleep_quality
 id tv_sleep_value
 id tv_specialty
+id tv_steps
 id tv_steps_count
 id tv_steps_value
 id tv_trainer_code
@@ -3807,6 +3812,7 @@ layout activity_client_metrics
 layout activity_home
 layout activity_login
 layout activity_register
+layout activity_trainer_biomarkers
 layout activity_trainer_home
 layout custom_dialog
 layout design_bottom_navigation_item

@@ -178,8 +178,11 @@ public class TrainerClientsFragment extends Fragment {
         long clientId = idObj instanceof Number ? ((Number) idObj).longValue() : -1;
         if (clientId == -1) return;
 
-        // Aquí se instanciará la nueva pantalla de biomarcadores (Punto 2)
-        Toast.makeText(requireContext(), "Biomarcadores: Próximamente", Toast.LENGTH_SHORT).show();
+        android.content.Intent intent = new android.content.Intent(requireContext(),
+                com.gymtrack.app.TrainerBiomarkersActivity.class);
+        intent.putExtra("CLIENT_ID", clientId);
+        intent.putExtra("CLIENT_NAME", (String) client.get("nombre"));
+        startActivity(intent);
     }
 
     // ─── Interfaces ────────────────────────────────────────────────────────────

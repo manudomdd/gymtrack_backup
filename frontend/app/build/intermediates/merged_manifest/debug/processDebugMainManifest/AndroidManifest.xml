@@ -53,6 +53,9 @@
         <activity
             android:name="com.gymtrack.app.TrainerClientMetricsActivity"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.gymtrack.app.TrainerBiomarkersActivity"
+            android:windowSoftInputMode="adjustPan" />
 
         <service
             android:name="com.gymtrack.app.services.StepCounterService"

@@ -88,6 +88,10 @@
         "source": "com.gymtrack.app-main-36:/layout/fragment_health.xml"
     },
     {
+        "merged": "com.gymtrack.app-debug-34:/layout_activity_trainer_biomarkers.xml.flat",
+        "source": "com.gymtrack.app-main-36:/layout/activity_trainer_biomarkers.xml"
+    },
+    {
         "merged": "com.gymtrack.app-debug-34:/drawable_bg_gradient.xml.flat",
         "source": "com.gymtrack.app-main-36:/drawable/bg_gradient.xml"
     },

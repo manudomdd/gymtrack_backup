@@ -50,16 +50,8 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> finish());
 
-        // Contenedor de salud (se añade a ll_scroll_content para evitar ClassCastException)
-        healthContainer = new LinearLayout(this);
-        healthContainer.setOrientation(LinearLayout.VERTICAL);
-        healthContainer.setPadding(0, 24, 0, 0);
-        LinearLayout scrollContent = findViewById(R.id.ll_scroll_content);
-        scrollContent.addView(healthContainer);
-
         if (clientId != -1) {
             fetchMetrics(clientId);
-            fetchHealthData(clientId);
         } else {
             Toast.makeText(this, "ID de cliente inválido", Toast.LENGTH_SHORT).show();
         }
@@ -125,61 +117,6 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
         metricsContainer.addView(row);
     }
 
-    // ── Datos de salud del cliente ─────────────────────────────────────────────
-
-    private void fetchHealthData(long clientId) {
-        authRepository.getClientHealth(clientId, new AuthRepository.HealthCallback() {
-            @Override
-            public void onSuccess(JsonObject health) {
-                runOnUiThread(() -> renderHealthSection(health));
-            }
-
-            @Override
-            public void onError(String message) {
-                runOnUiThread(() -> {
-                    addSectionHeader(healthContainer, "❤ Salud del cliente");
-                    addInfoRow(healthContainer, "No disponible: " + message, 0xFF888888);
-                });
-            }
-        });
-    }
-
-    private void renderHealthSection(JsonObject health) {
-        healthContainer.removeAllViews();
-        addSectionHeader(healthContainer, "❤ Salud del cliente");
-
-        // ── Sueño ──────────────────────────────────────────────────────────
-        addSectionHeader(healthContainer, "  😴 Sueño");
-        JsonArray sleepLogs = health.has("sleepLogs") ? health.getAsJsonArray("sleepLogs") : new JsonArray();
-        if (sleepLogs.size() == 0) {
-            addInfoRow(healthContainer, "Sin registros de sueño", 0xFFAAAAAA);
-        } else {
-            for (JsonElement el : sleepLogs) {
-                JsonObject log = el.getAsJsonObject();
-                String date = log.has("date") ? log.get("date").getAsString() : "—";
-                int hours = log.has("hoursSlept") ? log.get("hoursSlept").getAsInt() : 0;
-                int score = log.has("score") ? log.get("score").getAsInt() : 0;
-                addHealthRow(healthContainer, date, "🛏 " + hours + "h  |  Calidad: " + score + "/10",
-                        score >= 7 ? 0xFF4CAF50 : score >= 4 ? 0xFFFFA726 : 0xFFE53935);
-            }
-        }
-
-        // ── Pasos ──────────────────────────────────────────────────────────
-        addSectionHeader(healthContainer, "  👟 Pasos diarios");
-        JsonArray stepLogs = health.has("stepLogs") ? health.getAsJsonArray("stepLogs") : new JsonArray();
-        if (stepLogs.size() == 0) {
-            addInfoRow(healthContainer, "Sin registros de pasos", 0xFFAAAAAA);
-        } else {
-            for (JsonElement el : stepLogs) {
-                JsonObject log = el.getAsJsonObject();
-                String date = log.has("date") ? log.get("date").getAsString() : "—";
-                int steps = log.has("steps") ? log.get("steps").getAsInt() : 0;
-                int color = steps >= 10000 ? 0xFF4CAF50 : steps >= 6000 ? 0xFFFFA726 : 0xFFE53935;
-                addHealthRow(healthContainer, date, steps + " pasos", color);
-            }
-        }
-    }
-
     // ── Helpers de UI ──────────────────────────────────────────────────────────
 
     private void addSectionHeader(LinearLayout parent, String title) {
@@ -198,26 +135,5 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
         tv.setTextSize(15);
         tv.setPadding(8, 6, 0, 6);
         parent.addView(tv);
-    }
-
-    private void addHealthRow(LinearLayout parent, String date, String value, int valueColor) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(8, 8, 0, 8);
-
-        TextView tvDate = new TextView(this);
-        tvDate.setText(date);
-        tvDate.setTextColor(0xFF999999);
-        tvDate.setTextSize(14);
-        tvDate.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-        TextView tvValue = new TextView(this);
-        tvValue.setText(value);
-        tvValue.setTextColor(valueColor);
-        tvValue.setTextSize(14);
-
-        row.addView(tvDate);
-        row.addView(tvValue);
-        parent.addView(row);
     }
 }

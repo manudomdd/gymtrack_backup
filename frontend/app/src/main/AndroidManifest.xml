@@ -41,6 +41,10 @@
             android:name=".TrainerClientMetricsActivity"
             android:windowSoftInputMode="adjustPan" />
 
+        <activity
+            android:name=".TrainerBiomarkersActivity"
+            android:windowSoftInputMode="adjustPan" />
+
         <service
             android:name=".services.StepCounterService"
             android:exported="false"
