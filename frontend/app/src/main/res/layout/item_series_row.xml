@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fila dinámica para cada serie dentro del diálogo "Añadir Entrenamiento".
+    Se infla programáticamente en TrainingLogFragment al pulsar "+ Añadir Serie".
+    Hereda todos los estilos del proyecto (Widget.GymTrack.TextInputLayout, colores, etc.).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="12dp">
+
+    <!-- Separador visual + etiqueta de número de serie -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/tv_series_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Serie 1"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="@color/magenta"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Fila: Peso | Reps | RIR -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_serie_peso"
+            style="@style/Widget.GymTrack.TextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Peso (kg)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_serie_peso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Space android:layout_width="8dp" android:layout_height="wrap_content" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_serie_reps"
+            style="@style/Widget.GymTrack.TextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Reps">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_serie_reps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Space android:layout_width="8dp" android:layout_height="wrap_content" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_serie_rir"
+            style="@style/Widget.GymTrack.TextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="RIR">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_serie_rir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <Space android:layout_width="wrap_content" android:layout_height="8dp" />
+
+    <!-- Comentario (Opcional) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_serie_comment"
+        style="@style/Widget.GymTrack.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Comentario (Opcional)">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_serie_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

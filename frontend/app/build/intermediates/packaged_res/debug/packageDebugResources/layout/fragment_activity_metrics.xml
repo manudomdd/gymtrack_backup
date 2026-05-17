@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/deep_purple"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_date_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/white_54" />
+
+        <Space android:layout_width="wrap_content" android:layout_height="24dp"/>
+
+        <!-- Card: Pasos -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/input_field_bg" app:cardCornerRadius="12dp" android:layout_marginBottom="20dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚶 Pasos" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+                <TextView android:id="@+id/tv_steps_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="8523 pasos" android:textSize="28sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Objetivo: 10000 pasos" android:textSize="12sp" android:textColor="@color/white_54"/>
+                <Space android:layout_width="wrap_content" android:layout_height="8dp"/>
+                <ProgressBar android:id="@+id/pb_steps" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="85" android:progressTint="@color/magenta" android:progressBackgroundTint="@color/white_24"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="85% completado" android:textSize="12sp" android:textColor="@color/white_54"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card: Sueño -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/input_field_bg" app:cardCornerRadius="12dp" android:layout_marginBottom="20dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🌙 Sueño" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+                <TextView android:id="@+id/tv_sleep_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="7.5 horas" android:textSize="28sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Objetivo: 8 horas" android:textSize="12sp" android:textColor="@color/white_54"/>
+                <Space android:layout_width="wrap_content" android:layout_height="8dp"/>
+                <ProgressBar android:id="@+id/pb_sleep" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="93" android:progressTint="@color/primary_purple" android:progressBackgroundTint="@color/white_24"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="93% completado" android:textSize="12sp" android:textColor="@color/white_54"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card: Calorías -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/input_field_bg" app:cardCornerRadius="12dp" android:layout_marginBottom="20dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔥 Calorías Quemadas" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+                <TextView android:id="@+id/tv_calories_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="542 kcal" android:textSize="28sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Objetivo: 500 kcal" android:textSize="12sp" android:textColor="@color/white_54"/>
+                <Space android:layout_width="wrap_content" android:layout_height="8dp"/>
+                <ProgressBar android:id="@+id/pb_calories" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="100" android:progressTint="@color/error_red" android:progressBackgroundTint="@color/white_24"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="100% completado" android:textSize="12sp" android:textColor="@color/white_54"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card: Frecuencia Cardíaca -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/input_field_bg" app:cardCornerRadius="12dp" android:layout_marginBottom="20dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="❤ Frecuencia Cardíaca" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+                <TextView android:id="@+id/tv_hr_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="72 bpm" android:textSize="28sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Objetivo: 100 bpm" android:textSize="12sp" android:textColor="@color/white_54"/>
+                <Space android:layout_width="wrap_content" android:layout_height="8dp"/>
+                <ProgressBar android:id="@+id/pb_hr" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="72" android:progressTint="@color/success_green" android:progressBackgroundTint="@color/white_24"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="72% completado" android:textSize="12sp" android:textColor="@color/white_54"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Card: Agua -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/input_field_bg" app:cardCornerRadius="12dp" android:layout_marginBottom="20dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="💧 Agua Consumida" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <Space android:layout_width="wrap_content" android:layout_height="12dp"/>
+                <TextView android:id="@+id/tv_water_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2.5 litros" android:textSize="28sp" android:textStyle="bold" android:textColor="@color/white"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Objetivo: 3 litros" android:textSize="12sp" android:textColor="@color/white_54"/>
+                <Space android:layout_width="wrap_content" android:layout_height="8dp"/>
+                <ProgressBar android:id="@+id/pb_water" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:max="100" android:progress="83" android:progressTint="@color/magenta" android:progressBackgroundTint="@color/white_24"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="83% completado" android:textSize="12sp" android:textColor="@color/white_54"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btn_add_metric"
+            style="@style/Widget.GymTrack.Button.Purple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:text="+ Registrar Métrica Manual" />
+
+    </LinearLayout>
+</ScrollView>

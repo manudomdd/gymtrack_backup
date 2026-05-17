@@ -36,11 +36,15 @@ import java.util.Map;
 /**
  * Fragment para el registro de entrenamientos.
  *
- * Incluye:
- * - Calendario manual con navegación por meses
- * - Lista de entrenamientos del día seleccionado
- * - Diálogo para añadir nuevos entrenamientos
- * - Diálogo para registrar la ejecución real de series planificadas por el entrenador
+ * Flujo de registro (cliente):
+ * 1. Pulsar "+ Añadir Entrenamiento".
+ * 2. Introducir nombre del ejercicio y grupo muscular (cabecera común a todas las series).
+ * 3. Pulsar "+ Añadir Serie" para añadir filas individuales (Peso, Reps, RIR, Comentario).
+ * 4. Al guardar, se empaquetan todas las series en un JsonArray y se envían a
+ *    POST /api/client/workouts/batch.
+ *
+ * Vista del entrenador: modo solo lectura (btnAdd oculto).
+ * Lee de GET /api/trainer/client/{clientId}/workouts y muestra cada serie como card.
  */
 public class TrainingLogFragment extends Fragment {
 
@@ -51,6 +55,7 @@ public class TrainingLogFragment extends Fragment {
     private LinearLayout layoutEmpty;
     private WorkoutAdapter adapter;
 
+    // Lista completa de series recibidas del backend (modelo plano)
     private final List<Map<String, Object>> workoutSessions = new ArrayList<>();
 
     @Nullable
@@ -73,12 +78,12 @@ public class TrainingLogFragment extends Fragment {
         Button btnNext = view.findViewById(R.id.btn_next_month);
         Button btnAdd = view.findViewById(R.id.btn_add_workout);
 
+        // En modo entrenador (se recibe CLIENT_ID como argumento) ocultamos el botón de añadir
         long clientId = getArguments() != null ? getArguments().getLong("CLIENT_ID", -1) : -1;
         if (clientId != -1) {
-            btnAdd.setVisibility(View.GONE); // Modo solo lectura para el entrenador
+            btnAdd.setVisibility(View.GONE);
         }
 
-        // Ya no hay executeListener, los sets se añaden individualmente
         adapter = new WorkoutAdapter(new ArrayList<>());
         rvWorkouts.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvWorkouts.setAdapter(adapter);
@@ -91,6 +96,8 @@ public class TrainingLogFragment extends Fragment {
         fetchWorkoutsFromBackend();
     }
 
+    // ─── Calendario ──────────────────────────────────────────────────────────
+
     /** Reconstruye el calendario para el mes/año de selectedDate */
     private void refreshCalendar() {
         SimpleDateFormat fmt = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES"));
@@ -98,11 +105,11 @@ public class TrainingLogFragment extends Fragment {
         tvMonthYear.setText(cap.substring(0, 1).toUpperCase() + cap.substring(1));
 
         gridDays.removeAllViews();
-        
+
         Calendar firstDayCal = (Calendar) selectedDate.clone();
         firstDayCal.set(Calendar.DAY_OF_MONTH, 1);
         int dayOfWeek = firstDayCal.get(Calendar.DAY_OF_WEEK);
-        // Calendar.SUNDAY = 1, MONDAY = 2... lo ajustamos para que Lunes sea 0
+        // Calendar.SUNDAY = 1, MONDAY = 2... ajustamos para que Lunes sea columna 0
         int emptySlots = dayOfWeek == Calendar.SUNDAY ? 6 : dayOfWeek - 2;
 
         for (int i = 0; i < emptySlots; i++) {
@@ -147,15 +154,13 @@ public class TrainingLogFragment extends Fragment {
         refreshWorkoutList();
     }
 
-    /**
-     * Devuelve true si el número de día coincide con el día actualmente
-     * seleccionado en selectedDate (resaltado correcto al navegar entre meses).
-     */
     private boolean isSameDay(Calendar cal, int day) {
         return cal.get(Calendar.DAY_OF_MONTH) == day;
     }
 
-    /** Filtra y muestra los entrenamientos para el día seleccionado */
+    // ─── Lista de Series ──────────────────────────────────────────────────────
+
+    /** Filtra y muestra las series para el día seleccionado */
     private void refreshWorkoutList() {
         List<Map<String, Object>> filtered = new ArrayList<>();
         for (Map<String, Object> w : workoutSessions) {
@@ -172,90 +177,170 @@ public class TrainingLogFragment extends Fragment {
         layoutEmpty.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
-    /** Diálogo para añadir un nuevo entrenamiento de propia iniciativa del cliente */
+    // ─── Diálogo dinámico de añadir entrenamiento ─────────────────────────────
+
+    /**
+     * Diálogo con dos partes:
+     *   - Cabecera fija: Nombre ejercicio + Grupo muscular
+     *   - Contenedor dinámico: filas de series añadidas con "+ Añadir Serie"
+     *
+     * Cada fila contiene: Serie N (auto), Peso, Reps, RIR, Comentario.
+     */
     private void showAddWorkoutDialog() {
+        // Inflamos el diálogo en un ScrollView para poder hacer scroll cuando hay muchas series
+        ScrollView scrollWrapper = new ScrollView(requireContext());
         View dialogView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.dialog_add_workout, null);
+        scrollWrapper.addView(dialogView);
 
         TextInputEditText etExercise = dialogView.findViewById(R.id.et_exercise);
         android.widget.Spinner spinnerMuscleGroup = dialogView.findViewById(R.id.spinner_muscle_group);
-        TextInputEditText etPeso = dialogView.findViewById(R.id.et_peso);
-        // Ocultamos el input de sets si existe, ya que ahora registramos serie a serie
-        View viewSets = dialogView.findViewById(R.id.et_sets);
-        if (viewSets != null) {
-            View parentSets = (View) viewSets.getParent();
-            if (parentSets != null && parentSets instanceof android.widget.LinearLayout) {
-                parentSets.setVisibility(View.GONE);
-            }
-        }
-        TextInputEditText etReps = dialogView.findViewById(R.id.et_reps);
-        TextInputEditText etRir = dialogView.findViewById(R.id.et_rir);
-        TextInputEditText etComment = dialogView.findViewById(R.id.et_comment);
+        LinearLayout containerSeries = dialogView.findViewById(R.id.container_series);
+        Button btnAddSeries = dialogView.findViewById(R.id.btn_add_series);
 
+        // Spinner de grupos musculares
         String[] groups = {"Pecho", "Espalda", "Hombro", "Bíceps", "Tríceps", "Cuádriceps", "Femorales"};
-        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(
+        android.widget.ArrayAdapter<String> spinnerAdapter = new android.widget.ArrayAdapter<>(
                 requireContext(), android.R.layout.simple_spinner_item, groups);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerMuscleGroup.setAdapter(adapter);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMuscleGroup.setAdapter(spinnerAdapter);
+
+        // Lista que rastrea las vistas de cada serie añadida
+        final List<View> seriesViews = new ArrayList<>();
+
+        // Añadir la primera serie automáticamente para no dejar el diálogo vacío
+        addSeriesRow(containerSeries, seriesViews);
+
+        btnAddSeries.setOnClickListener(v -> addSeriesRow(containerSeries, seriesViews));
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Registrar Entrenamiento")
-                .setView(dialogView)
+                .setView(scrollWrapper)
                 .setNegativeButton("Cancelar", null)
                 .setPositiveButton("Guardar", (dialog, which) -> {
-                    String exercise = etExercise.getText() != null ? etExercise.getText().toString().trim() : "";
+                    String exercise = etExercise.getText() != null
+                            ? etExercise.getText().toString().trim() : "";
                     if (exercise.isEmpty()) {
-                        Toast.makeText(requireContext(), "Introduce el nombre del ejercicio", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(),
+                                "Introduce el nombre del ejercicio", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    JsonObject workout = new JsonObject();
-                    workout.addProperty("exercise", exercise);
-                    workout.addProperty("muscleGroup", spinnerMuscleGroup.getSelectedItem().toString());
-                    workout.addProperty("peso", parseDoubleOrZero(etPeso));
-                    workout.addProperty("sets", 1); // Siempre 1 serie por registro
-                    workout.addProperty("reps", parseOrZero(etReps));
-                    workout.addProperty("rir", parseOrZero(etRir));
-                    workout.addProperty("comment", etComment.getText() != null ? etComment.getText().toString() : "");
-                    workout.addProperty("date", new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(selectedDate.getTime()));
-                    workout.addProperty("completed", true);
-                    saveWorkoutToBackend(workout);
+                    if (seriesViews.isEmpty()) {
+                        Toast.makeText(requireContext(),
+                                "Añade al menos una serie", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    String muscleGroup = spinnerMuscleGroup.getSelectedItem().toString();
+                    String dateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                            .format(selectedDate.getTime());
+
+                    // Construir el JsonArray con una entrada por serie
+                    JsonArray seriesArray = new JsonArray();
+                    for (int i = 0; i < seriesViews.size(); i++) {
+                        View row = seriesViews.get(i);
+                        TextInputEditText etPeso = row.findViewById(R.id.et_serie_peso);
+                        TextInputEditText etReps = row.findViewById(R.id.et_serie_reps);
+                        TextInputEditText etRir = row.findViewById(R.id.et_serie_rir);
+                        TextInputEditText etComment = row.findViewById(R.id.et_serie_comment);
+
+                        JsonObject serie = new JsonObject();
+                        serie.addProperty("exercise", exercise);
+                        serie.addProperty("muscleGroup", muscleGroup);
+                        serie.addProperty("seriesNumber", i + 1);  // 1-indexed
+                        serie.addProperty("peso", parseDoubleOrZero(etPeso));
+                        serie.addProperty("reps", parseOrZero(etReps));
+                        serie.addProperty("rir", parseOrZero(etRir));
+                        serie.addProperty("comment",
+                                etComment.getText() != null ? etComment.getText().toString() : "");
+                        serie.addProperty("date", dateStr);
+                        seriesArray.add(serie);
+                    }
+
+                    saveWorkoutBatchToBackend(seriesArray);
                 })
                 .show();
     }
 
-    private void saveWorkoutToBackend(JsonObject workout) {
+    /**
+     * Infla una nueva fila (item_series_row.xml), actualiza el número de serie
+     * en la etiqueta y la añade al contenedor dinámico del diálogo.
+     */
+    private void addSeriesRow(LinearLayout container, List<View> seriesViews) {
+        View row = LayoutInflater.from(requireContext())
+                .inflate(R.layout.item_series_row, container, false);
+        int seriesNum = seriesViews.size() + 1;
+        TextView tvLabel = row.findViewById(R.id.tv_series_label);
+        tvLabel.setText("Serie " + seriesNum);
+        container.addView(row);
+        seriesViews.add(row);
+    }
+
+    // ─── Comunicación con el backend ─────────────────────────────────────────
+
+    /**
+     * POST /api/client/workouts/batch
+     * Envía el JsonArray completo de series y refresca la lista al recibir 200.
+     * Guard: si el token es null (sesión expirada), muestra error y aborta.
+     */
+    private void saveWorkoutBatchToBackend(JsonArray seriesArray) {
         com.gymtrack.app.network.AuthRepository auth =
                 new com.gymtrack.app.network.AuthRepository(requireContext());
+
+        String token = auth.getToken();
+        if (token == null) {
+            Toast.makeText(requireContext(),
+                    "Sesión expirada. Por favor, vuelve a iniciar sesión.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
         okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
 
         new Thread(() -> {
             try {
                 okhttp3.RequestBody body = okhttp3.RequestBody.create(
-                        workout.toString(), okhttp3.MediaType.get("application/json; charset=utf-8"));
+                        seriesArray.toString(),
+                        okhttp3.MediaType.get("application/json; charset=utf-8"));
                 okhttp3.Request request = new okhttp3.Request.Builder()
-                        .url("http://10.0.2.2:8080/api/client/workouts")
-                        .addHeader("Authorization", "Bearer " + auth.getToken())
+                        .url("http://10.0.2.2:8080/api/client/workouts/batch")
+                        .addHeader("Authorization", "Bearer " + token)
                         .post(body).build();
 
                 try (okhttp3.Response response = client.newCall(request).execute()) {
                     if (getActivity() == null) return;
                     getActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Entrenamiento guardado", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),
+                                    "Entrenamiento guardado", Toast.LENGTH_SHORT).show();
                             fetchWorkoutsFromBackend();
+                        } else if (response.code() == 403 || response.code() == 401) {
+                            Toast.makeText(getContext(),
+                                    "Sesión expirada. Por favor, vuelve a iniciar sesión.",
+                                    Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),
+                                    "Error al guardar (" + response.code() + ")",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } catch (IOException e) {
                 if (getActivity() == null) return;
                 getActivity().runOnUiThread(
-                        () -> Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show());
+                        () -> Toast.makeText(getContext(),
+                                "Error de conexión", Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
 
+    /**
+     * GET /api/client/workouts  (cliente)
+     * GET /api/trainer/client/{id}/workouts  (entrenador en modo lectura)
+     *
+     * Parseo robusto: todos los campos opcionales se comprueban con isJsonNull()
+     * para evitar NullPointerException si el cliente dejó algún campo vacío.
+     */
     private void fetchWorkoutsFromBackend() {
         com.gymtrack.app.network.AuthRepository auth =
                 new com.gymtrack.app.network.AuthRepository(requireContext());
@@ -263,8 +348,9 @@ public class TrainingLogFragment extends Fragment {
 
         new Thread(() -> {
             try {
-                long clientId = getArguments() != null ? getArguments().getLong("CLIENT_ID", -1) : -1;
-                String url = clientId != -1 
+                long clientId = getArguments() != null
+                        ? getArguments().getLong("CLIENT_ID", -1) : -1;
+                String url = clientId != -1
                         ? "http://10.0.2.2:8080/api/trainer/client/" + clientId + "/workouts"
                         : "http://10.0.2.2:8080/api/client/workouts";
 
@@ -276,27 +362,37 @@ public class TrainingLogFragment extends Fragment {
                 try (okhttp3.Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String json = response.body().string();
-                        com.google.gson.JsonArray array =
+                        JsonArray array =
                                 com.google.gson.JsonParser.parseString(json).getAsJsonArray();
 
                         workoutSessions.clear();
-                        for (com.google.gson.JsonElement el : array) {
+                        for (JsonElement el : array) {
                             JsonObject obj = el.getAsJsonObject();
                             Map<String, Object> map = new HashMap<>();
-                            map.put("id", obj.get("id").getAsLong());
-                            map.put("exercise", obj.get("exercise").getAsString());
-                            map.put("muscleGroup", obj.get("muscleGroup").getAsString());
-                            map.put("sets", obj.get("sets").getAsInt());
-                            map.put("reps", obj.get("reps").getAsInt());
-                            map.put("rir", obj.get("rir").getAsInt());
-                            map.put("peso", obj.get("peso").getAsDouble());
-                            map.put("comment", obj.get("comment").isJsonNull() ? "" : obj.get("comment").getAsString());
-                            map.put("completed", obj.get("completed").getAsBoolean());
 
-                            String dateStr = obj.get("date").getAsString();
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(dateStr));
-                            map.put("date", cal);
+                            // Campos obligatorios
+                            map.put("id", safeGetLong(obj, "id", -1L));
+                            map.put("exercise", safeGetString(obj, "exercise", "—"));
+                            map.put("muscleGroup", safeGetString(obj, "muscleGroup", "—"));
+
+                            // seriesNumber: número ordinal de la serie (campo "seriesNumber" en JSON)
+                            map.put("seriesNumber", safeGetInt(obj, "seriesNumber", 1));
+
+                            map.put("peso", safeGetDouble(obj, "peso", 0.0));
+                            map.put("reps", safeGetInt(obj, "reps", 0));
+                            map.put("rir", safeGetInt(obj, "rir", 0));
+
+                            // Comentario puede ser null si el usuario lo dejó vacío
+                            map.put("comment", safeGetString(obj, "comment", ""));
+
+                            // Fecha
+                            String dateStr = safeGetString(obj, "date", null);
+                            if (dateStr != null) {
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(new SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                                        .parse(dateStr));
+                                map.put("date", cal);
+                            }
 
                             workoutSessions.add(map);
                         }
@@ -311,6 +407,34 @@ public class TrainingLogFragment extends Fragment {
         }).start();
     }
 
+    // ─── Helpers de parseo robusto ───────────────────────────────────────────
+
+    private String safeGetString(JsonObject obj, String key, String fallback) {
+        if (!obj.has(key) || obj.get(key).isJsonNull()) return fallback;
+        return obj.get(key).getAsString();
+    }
+
+    private int safeGetInt(JsonObject obj, String key, int fallback) {
+        try {
+            if (!obj.has(key) || obj.get(key).isJsonNull()) return fallback;
+            return obj.get(key).getAsInt();
+        } catch (Exception e) { return fallback; }
+    }
+
+    private double safeGetDouble(JsonObject obj, String key, double fallback) {
+        try {
+            if (!obj.has(key) || obj.get(key).isJsonNull()) return fallback;
+            return obj.get(key).getAsDouble();
+        } catch (Exception e) { return fallback; }
+    }
+
+    private long safeGetLong(JsonObject obj, String key, long fallback) {
+        try {
+            if (!obj.has(key) || obj.get(key).isJsonNull()) return fallback;
+            return obj.get(key).getAsLong();
+        } catch (Exception e) { return fallback; }
+    }
+
     private int parseOrZero(TextInputEditText et) {
         try { return et.getText() != null ? Integer.parseInt(et.getText().toString()) : 0; }
         catch (NumberFormatException e) { return 0; }
@@ -323,10 +447,10 @@ public class TrainingLogFragment extends Fragment {
 
     // ─── Adapter ──────────────────────────────────────────────────────────────
 
-    interface OnWorkoutClick {
-        void onClick(Map<String, Object> workout);
-    }
-
+    /**
+     * Adaptador para mostrar cada serie individual en el RecyclerView.
+     * Funciona tanto para el cliente (modo escritura) como para el entrenador (modo lectura).
+     */
     private static class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.VH> {
 
         private List<Map<String, Object>> data;
@@ -351,37 +475,59 @@ public class TrainingLogFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
             Map<String, Object> w = data.get(position);
-            holder.tvExercise.setText((String) w.get("exercise"));
-            
-            // Reutilizamos tvSets para mostrar el RIR de forma más compacta, ya que es 1 set
-            holder.tvSets.setText("Peso: " + w.get("peso") + "kg");
-            holder.tvReps.setText("Reps: " + w.get("reps"));
-            holder.tvRir.setText("RIR: " + w.get("rir"));
 
+            // Grupo muscular (subtítulo en mayúsculas)
+            String muscleGroup = (String) w.get("muscleGroup");
+            holder.tvMuscleGroup.setText(muscleGroup != null ? muscleGroup.toUpperCase() : "");
+
+            // Nombre del ejercicio
+            holder.tvExercise.setText((String) w.get("exercise"));
+
+            // Número de serie ordinal
+            Object seriesNum = w.get("seriesNumber");
+            holder.tvSets.setText(seriesNum != null ? String.valueOf(seriesNum) : "—");
+
+            // Peso
+            Object peso = w.get("peso");
+            holder.tvPeso.setText(peso != null ? String.valueOf(peso) : "—");
+
+            // Repeticiones
+            Object reps = w.get("reps");
+            holder.tvReps.setText(reps != null ? String.valueOf(reps) : "—");
+
+            // RIR
+            Object rir = w.get("rir");
+            holder.tvRir.setText(rir != null ? String.valueOf(rir) : "—");
+
+            // Comentario: visible solo si no está vacío
             String comment = (String) w.get("comment");
-            if (comment != null && !comment.isEmpty()) {
+            if (comment != null && !comment.trim().isEmpty()) {
                 holder.tvComment.setVisibility(View.VISIBLE);
-                holder.tvComment.setText("Comentario: " + comment);
+                holder.tvComment.setText("💬 " + comment);
             } else {
                 holder.tvComment.setVisibility(View.GONE);
             }
 
-            holder.btnEdit.setVisibility(View.GONE); // No es necesario editar/ver en este nuevo flujo simple
+            // Botón editar oculto; eliminar disponible para futura implementación
+            holder.btnEdit.setVisibility(View.GONE);
             holder.btnDelete.setOnClickListener(
-                    v -> Toast.makeText(v.getContext(), "Eliminar en desarrollo", Toast.LENGTH_SHORT).show());
+                    v -> Toast.makeText(v.getContext(),
+                            "Eliminar en desarrollo", Toast.LENGTH_SHORT).show());
         }
 
         @Override
         public int getItemCount() { return data.size(); }
 
         static class VH extends RecyclerView.ViewHolder {
-            TextView tvExercise, tvSets, tvReps, tvRir, tvComment;
+            TextView tvMuscleGroup, tvExercise, tvSets, tvPeso, tvReps, tvRir, tvComment;
             View btnEdit, btnDelete;
 
             VH(@NonNull View itemView) {
                 super(itemView);
+                tvMuscleGroup = itemView.findViewById(R.id.tv_muscle_group);
                 tvExercise = itemView.findViewById(R.id.tv_exercise_name);
                 tvSets = itemView.findViewById(R.id.tv_sets);
+                tvPeso = itemView.findViewById(R.id.tv_peso);
                 tvReps = itemView.findViewById(R.id.tv_reps);
                 tvRir = itemView.findViewById(R.id.tv_rir);
                 tvComment = itemView.findViewById(R.id.tv_comment);

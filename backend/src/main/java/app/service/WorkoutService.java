@@ -23,6 +23,14 @@ public class WorkoutService {
         return repository.save(session);
     }
 
+    /**
+     * Persiste una lista completa de series de un mismo entrenamiento de una vez.
+     * Cada elemento representa una serie individual con su número ordinal ya asignado.
+     */
+    public List<WorkoutSession> saveAllSessions(List<WorkoutSession> sessions) {
+        return repository.saveAll(sessions);
+    }
+
     public List<WorkoutSession> getSessionsByUser(Long userId) {
         return repository.findByUserId(userId);
     }
