@@ -19,12 +19,19 @@ public class WorkoutSession {
     private LocalDate date;
     private String exercise;
     private String muscleGroup; // "Pecho", "Espalda", etc.
-    private int sets;
+
+    /**
+     * Número ordinal de la serie dentro de la sesión del día.
+     * Columna mantenida como 'sets' en BD para no romper el esquema existente.
+     * Ej: Serie 1, Serie 2, Serie 3...
+     */
+    @Column(name = "sets")
+    private int seriesNumber;
+
     private int reps;
     private int rir;
     private double peso; // Carga utilizada
     private String comment;
-    private boolean completed;
 
     public WorkoutSession() {
     }
@@ -69,12 +76,12 @@ public class WorkoutSession {
         this.muscleGroup = muscleGroup;
     }
 
-    public int getSets() {
-        return sets;
+    public int getSeriesNumber() {
+        return seriesNumber;
     }
 
-    public void setSets(int sets) {
-        this.sets = sets;
+    public void setSeriesNumber(int seriesNumber) {
+        this.seriesNumber = seriesNumber;
     }
 
     public int getReps() {
@@ -107,14 +114,6 @@ public class WorkoutSession {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
     }
 
 }

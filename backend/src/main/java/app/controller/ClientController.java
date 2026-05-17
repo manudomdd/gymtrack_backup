@@ -91,14 +91,34 @@ public class ClientController {
     }
 
     /**
-     * Permite al cliente registrar la ejecución real (actualSets) de una sesión
-     * que el entrenador le ha asignado previamente.
+     * Endpoint batch: recibe la lista completa de series de un entrenamiento
+     * (cada elemento es una serie individual con su número ordinal).
+     * Es el endpoint principal usado por el cliente para guardar su sesión.
+     *
+     * @param auth     usuario autenticado
+     * @param sessions lista de series a persistir
+     * @return lista de series guardadas
+     */
+    @PostMapping("/workouts/batch")
+    public ResponseEntity<List<WorkoutSession>> addWorkoutBatch(Authentication auth,
+            @RequestBody List<WorkoutSession> sessions) {
+        Optional<User> userOpt = userRepo.findByEmail(auth.getName());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(401).build();
+        }
+        User user = userOpt.get();
+        sessions.forEach(s -> s.setUser(user));
+        return ResponseEntity.ok(workoutService.saveAllSessions(sessions));
+    }
+
+    /**
+     * Permite al cliente actualizar peso/reps/rir de una serie ya registrada.
      * Solo el propietario de la sesión puede actualizarla.
      *
      * @param auth   usuario autenticado
-     * @param id     ID de la sesión a actualizar
-     * @param update objeto con los campos actualSets y completed
-     * @return sesión actualizada o 403/404 si no procede
+     * @param id     ID de la serie a actualizar
+     * @param update objeto con los campos a actualizar
+     * @return serie actualizada o 403/404 si no procede
      */
     @PutMapping("/workouts/{id}")
     public ResponseEntity<?> updateWorkoutExecution(Authentication auth,
@@ -118,7 +138,6 @@ public class ClientController {
         session.setReps(update.getReps());
         session.setPeso(update.getPeso());
         session.setRir(update.getRir());
-        session.setCompleted(update.isCompleted());
         return ResponseEntity.ok(workoutService.saveSession(session));
     }
 

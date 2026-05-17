@@ -15,6 +15,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.gymtrack.app.network.AuthRepository;
 
+import android.content.res.ColorStateList;
+import android.view.LayoutInflater;
 import java.util.Map;
 
 /**
@@ -85,36 +87,32 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
     }
 
     private void addMetricView(String muscleGroup, double slope) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, 12, 0, 12);
-
-        TextView tvMuscle = new TextView(this);
-        tvMuscle.setText(muscleGroup);
-        tvMuscle.setTextColor(0xFFFFFFFF);
-        tvMuscle.setTextSize(17);
-        tvMuscle.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-        TextView tvSlope = new TextView(this);
+        View card = LayoutInflater.from(this).inflate(R.layout.item_metric_card, metricsContainer, false);
+        
+        TextView tvMuscle = card.findViewById(R.id.tv_muscle_group);
+        TextView tvSlope = card.findViewById(R.id.tv_slope_value);
+        TextView tvEval = card.findViewById(R.id.tv_evaluation);
+        
+        tvMuscle.setText(muscleGroup.toUpperCase());
+        
         String evaluation;
         int color;
         if (slope > 0.05) {
-            evaluation = "↑ Progresando";
-            color = 0xFF4CAF50;
+            evaluation = "Progresando";
+            color = 0xFF00BF80; // success_green
         } else if (slope < -0.05) {
-            evaluation = "↓ Retroceso";
-            color = 0xFFE53935;
+            evaluation = "Retroceso";
+            color = 0xFFFF3333; // error_red
         } else {
-            evaluation = "→ Estancado";
-            color = 0xFFFFA726;
+            evaluation = "Estancado";
+            color = 0xFFFFA726; // orange
         }
-        tvSlope.setText(String.format("%.2f kg/día  (%s)", slope, evaluation));
-        tvSlope.setTextColor(color);
-        tvSlope.setTextSize(15);
-
-        row.addView(tvMuscle);
-        row.addView(tvSlope);
-        metricsContainer.addView(row);
+        
+        tvSlope.setText(String.format("Pendiente: %+.2f kg/día", slope));
+        tvEval.setText(evaluation);
+        tvEval.setBackgroundTintList(ColorStateList.valueOf(color));
+        
+        metricsContainer.addView(card);
     }
 
     // ── Helpers de UI ──────────────────────────────────────────────────────────
@@ -122,9 +120,10 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
     private void addSectionHeader(LinearLayout parent, String title) {
         TextView tv = new TextView(this);
         tv.setText(title);
-        tv.setTextColor(0xFFFFFFFF);
+        tv.setTextColor(getResources().getColor(R.color.magenta));
         tv.setTextSize(18);
-        tv.setPadding(0, 20, 0, 8);
+        tv.setTypeface(null, android.graphics.Typeface.BOLD);
+        tv.setPadding(0, 24, 0, 16);
         parent.addView(tv);
     }
 
@@ -133,7 +132,7 @@ public class TrainerClientMetricsActivity extends AppCompatActivity {
         tv.setText(text);
         tv.setTextColor(color);
         tv.setTextSize(15);
-        tv.setPadding(8, 6, 0, 6);
+        tv.setPadding(8, 6, 0, 24);
         parent.addView(tv);
     }
 }
